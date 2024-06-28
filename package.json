@@ -1,0 +1,31 @@
+{
+  "name": "playwright-intraverse-test",
+  "version": "1.0.0",
+  "description": "Intraverse app E2E Test",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "pretty": "prettier --write \"./**/*.{yml,ts,tsx,json}\"",
+    "run-test": "playwright test",
+    "report": "playwright show-report reports/html"
+  },
+  "keywords": [],
+  "author": "FAO",
+  "license": "ISC",
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@playwright/test": "^1.42.0",
+    "@types/node": "^20.11.24",
+    "eslint": "^8.57.0",
+    "eslint-plugin-playwright": "^1.5.1",
+    "find-root": "^1.1.0",
+    "node-fetch": "^3.3.2",
+    "prettier": "3.2.5",
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^7.1.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
