@@ -2,31 +2,51 @@
 
 import { Locator, Page, expect } from "@playwright/test";
 import { BasePage } from "./BasePage";
+import { User } from "src/fixtures/user";
 
 export class SignUpPage extends BasePage {
-  readonly nameInput: Locator;
+  readonly firstNameInput: Locator;
+  readonly lastNameInput: Locator;
   readonly emailInput: Locator;
+  readonly phoneCode: Locator;
+  readonly phoneNumber: Locator;
   readonly passwordInput: Locator;
   readonly confirmPasswordInput: Locator;
   readonly submitButton: Locator;
+  readonly termsAndConditionCheckBox: Locator;
+  readonly signUpWithEmail: Locator;
 
   constructor(page: Page) {
     super(page);
-    this.nameInput = page.getByAltText('Name'); // Adjust selector as needed
-    this.emailInput = page.getByAltText('Email'); // Adjust selector as needed
-    this.passwordInput = page.getByAltText('Password'); // Adjust selector as needed
-    this.confirmPasswordInput = page.getByAltText('Confirm Password'); // Adjust selector as needed
-    this.submitButton = page.getByRole('button', { name: /sign up/i }); // Adjust selector as needed
+    this.signUpWithEmail = page.getByText(/sign up with your email/i)
+    this.firstNameInput = page.getByRole('textbox', { name: /first name/i })
+    this.lastNameInput =  page.getByRole('textbox', { name: /last name/i })
+    this.emailInput = page.getByRole('textbox', { name: /your email address/i })
+    this.phoneCode = page.getByRole('textbox', { name: /phone code/i })
+    this.phoneNumber = page.locator('input[name="phone"]')
+    this.passwordInput = page.getByLabel('Your password')
+    this.confirmPasswordInput = page.getByLabel('Confirm password');
+    this.termsAndConditionCheckBox = page.getByRole('checkbox', { name: /I’ve read and agree with Intraverse/i });
+    this.submitButton = page.getByRole('button', { name: /sign up/i })
   }
 
-  async fillSignUpForm(name: string, email: string, password: string) {
-    await this.nameInput.fill(name);
-    await this.emailInput.fill(email);
-    await this.passwordInput.fill(password);
-    await this.confirmPasswordInput.fill(password);
+  async verifyPage(){
+    await expect(this.signUpWithEmail).toBeVisible();
   }
 
-  async submitForm() {
+  async clickSignUpWithEmail() {
+    await this.signUpWithEmail.click()
+  }
+
+  async fillAndSubmitSignUpForm(user: User) {
+    await this.firstNameInput.fill(user.firstName);
+    await this.lastNameInput.fill(user.lastName);
+    await this.emailInput.fill(user.email);
+    await this.phoneNumber.fill(user.phoneNumber);
+    await this.passwordInput.fill(user.password);
+    await this.confirmPasswordInput.fill(user.password);
+    await this.termsAndConditionCheckBox.check();
     await this.submitButton.click();
   }
+
 }
