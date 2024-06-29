@@ -18,3 +18,4 @@ export const defaultUser = (): User => {
         phoneNumber: faker.string.numeric(10)
     }
 }
+    
