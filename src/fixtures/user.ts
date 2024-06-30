@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { getNewEmail } from 'src/utils/emailClient';
 
 export interface User {
 firstName: string
@@ -9,11 +10,11 @@ phoneNumber: string
 }
 
 
-export const defaultUser = (): User => {
+export const defaultUser = async (): Promise<User> => {
     return {
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
-        email: `test-intra-${faker.string.numeric(7)}@yopmail.com`,
+        email: await getNewEmail(),
         password: '@Test12345',
         phoneNumber: faker.string.numeric(10)
     }

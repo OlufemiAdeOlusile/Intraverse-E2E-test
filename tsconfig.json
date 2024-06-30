@@ -3,13 +3,14 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "incremental": true,
-    "target": "ES2021",
+    "target": "es6",
     "module": "CommonJS",
     "moduleResolution": "Node",
     "sourceMap": true,
     "outDir": "dist",
     "types": ["node"]
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts"],
+  //"typeRoots": ["./types", "node_modules/@types"],
+  "include": ["src/**/*.ts", "tests/**/*.ts", "easy-yopmail.d.ts"],
   "exclude": ["node_modules"]
 }
