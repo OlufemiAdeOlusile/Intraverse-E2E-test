@@ -3,3 +3,4 @@ package-lock.json
 reports/html/*
 test-results/*
 .idea
+dist/*
