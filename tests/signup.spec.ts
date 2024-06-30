@@ -1,13 +1,26 @@
 import { test } from 'src/fixtures';
+import { User, defaultUser } from 'src/fixtures/user';
 import { LoginPage } from 'src/pages/LoginPage';
+import { SignUpPage } from 'src/pages/SignUpPage';
 
 
 const { BASE_URL } = process.env;
 
 test.describe('Playwright', () => {
-  test('Sign up a new user', async ({ page }) => {
+  test('Sign up a new user if not registered', async ({ page }) => {
     const loginPage: LoginPage = new LoginPage(page);
-    await loginPage.verifyPage(BASE_URL)
+    const signUpPage: SignUpPage = new SignUpPage(page);
+    const newuser: User =  defaultUser();
+
+    // Navigate to the login page
+    await loginPage.verifyPage();
+    // Click the sign-up button to navigate to the sign-up page
     await loginPage.clickSignUp();
+    // Land and verify Sign Up page
+    await signUpPage.verifyPage();
+    //click signup via email
+    await signUpPage.clickSignUpWithEmail();
+    // fill and submit signup;
+    await signUpPage.fillAndSubmitSignUpForm(newuser);
   });
 });
