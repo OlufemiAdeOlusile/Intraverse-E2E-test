@@ -1,39 +1,59 @@
-import { Locator, Page, expect } from "@playwright/test";
-import { BasePage } from "./BasePage";
-import { getInboxId, getMessageText } from "src/utils/emailClient";
+import { Locator, Page, expect } from '@playwright/test';
+import { BasePage } from './BasePage';
+import { getInboxId, getMessageText } from 'src/utils/emailClient';
+import retry from 'async-retry';
+import { config } from 'src/utils/config';
 
 export class VerificationPage extends BasePage {
   readonly verify: Locator;
 
-
-constructor(page: Page) {
+  constructor(page: Page) {
     super(page);
     this.verify = page.getByRole('button', { name: /verify/i });
-}
+  }
 
-async getTokenFromEmailClient(email: string): Promise<string>{
-    await this.page.waitForTimeout(10000)
-    const messageId: string = await getInboxId(email, 'Verify your Intraverse email');
-    await this.page.waitForTimeout(1000)
-    const message: string = await getMessageText(email, messageId);
+  async getTokenFromEmailClient(email: string): Promise<string> {
+    let message: string;
+
+    await retry(async () => {
+      try {
+        //Get Message ID
+        const messageId: string = await getInboxId(
+          email,
+          'Verify your Intraverse email',
+        );
+        if (messageId == undefined) {
+          throw new Error('Cannot get MessageId ---> Retry');
+        }
+        // Get Message
+        message = await getMessageText(email, messageId);
+
+        if (message == undefined) {
+          throw new Error('Cannot Get Message');
+        }
+      } catch (e) {
+        console.log('Submitting a new sign up failed ----> Retry');
+      }
+    }, config.RETRY_CONFIG);
+
+    //Matcher to find 6 digit number
     const codeMatch = message.match(/\b\d{6}\b/);
     return codeMatch ? codeMatch[0] : null;
-}
+  }
 
-async enterToken(token: string) {
+  async enterToken(token: string) {
     const tokenArray: string[] = token.split('');
-    await this.page.locator(`input[tabindex="${1}"]`).click()
+    await this.page.locator(`input[tabindex="${1}"]`).click();
     for (let i = 0; i < tokenArray.length; i++) {
-        await this.page.fill(`input[tabindex="${i+ 1}"]`, tokenArray[i])
+      await this.page.fill(`input[tabindex="${i + 1}"]`, tokenArray[i]);
     }
-}
+  }
 
-async verifyPage() {
+  async landOnPage() {
     await expect(this.verify).toBeVisible();
-}
+  }
 
-async submitToken() {
+  async submitToken() {
     await this.verify.click();
-}
-
+  }
 }

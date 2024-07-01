@@ -45,6 +45,6 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         launchOptions: { args: ['--disable-gpu', '--disable-dev-shm-usage'] },
       },
-    }
+    },
   ],
 });

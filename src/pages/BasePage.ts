@@ -1,14 +1,13 @@
 import { Page } from '@playwright/test';
 
-export class BasePage{
+export class BasePage {
+  readonly page: Page;
 
-  readonly page: Page
-  
   constructor(page: Page) {
-    this.page = page
+    this.page = page;
   }
 
-  and(){
+  and() {
     return this;
   }
 }
