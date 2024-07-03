@@ -5,7 +5,6 @@ import { SignUpPage } from 'src/pages/signUpAndLogin/SignUpPage';
 import { VerificationPage } from 'src/pages/signUpAndLogin/VerificationPage';
 
 test.describe('Playwright', () => {
-
   test('Sign up a new user, logout and verify login', async ({ page }) => {
     const loginPage: LoginPage = new LoginPage(page);
     const signUpPage: SignUpPage = new SignUpPage(page);
@@ -23,6 +22,5 @@ test.describe('Playwright', () => {
 
     await verificationPage.enterToken(token);
     await verificationPage.submitToken();
-
   });
 });

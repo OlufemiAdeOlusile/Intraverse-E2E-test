@@ -3,7 +3,7 @@ import { BasePage } from '../BasePage';
 import { getInboxId, getMessageText } from 'src/utils/emailClient';
 import retry from 'async-retry';
 import { config } from 'src/utils/config';
-import {GettingStartedPage} from "../onboarding/GettingStartedPage";
+import { GettingStartedPage } from '../onboarding/GettingStartedPage';
 
 export class VerificationPage extends BasePage {
   readonly verify: Locator;
@@ -31,14 +31,14 @@ export class VerificationPage extends BasePage {
         if (message === undefined) {
           throw new Error(`Cannot get Message: ${message} ---> Retry`);
         }
-      } catch(e) {
+      } catch (e) {
         console.log(e);
-        throw new Error('Submitting a new sign up failed ----> Retry')
+        throw new Error('Submitting a new sign up failed ----> Retry');
       }
     }, config.RETRY_CONFIG);
 
     //Matcher to find 6 digit number
-    const codeMatch:RegExpMatchArray = message.match(/\b\d{6}\b/);
+    const codeMatch: RegExpMatchArray = message.match(/\b\d{6}\b/);
     return codeMatch ? codeMatch[0] : null;
   }
 
@@ -56,7 +56,9 @@ export class VerificationPage extends BasePage {
 
   async submitToken() {
     await this.verify.click();
-    const gettingStartedPage: GettingStartedPage = new GettingStartedPage(this.page);
+    const gettingStartedPage: GettingStartedPage = new GettingStartedPage(
+      this.page,
+    );
     await gettingStartedPage.landOnPage();
   }
 }

@@ -57,7 +57,9 @@ export class SignUpPage extends BasePage {
     await retry(async () => {
       try {
         await this.submitButton.click();
-        const verificationPage: VerificationPage = new VerificationPage(this.page);
+        const verificationPage: VerificationPage = new VerificationPage(
+          this.page,
+        );
         await verificationPage.landOnPage();
       } catch (e) {
         console.log('Submitting a new sign up failed ----> Retry');
