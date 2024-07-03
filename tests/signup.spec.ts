@@ -9,16 +9,16 @@ test.describe('Sign UP', () => {
     const loginPage: LoginPage = new LoginPage(page);
     const signUpPage: SignUpPage = new SignUpPage(page);
     const verificationPage: VerificationPage = new VerificationPage(page);
-    const newuser: User = await defaultUser();
+    const newUser: User = await defaultUser();
 
     await loginPage.landOnPage();
     await loginPage.clickSignUp();
     await signUpPage.clickSignUpWithEmail();
-    await signUpPage.fillAndSubmitSignUpForm(newuser);
+    await signUpPage.fillAndSubmitSignUpForm(newUser);
 
     const token: string = await verificationPage.getTokenFromEmailClient(
-      newuser.email,
-      newuser.emailClientPassword,
+      newUser.email,
+      newUser.emailClientPassword,
     );
 
     await verificationPage.enterToken(token);
