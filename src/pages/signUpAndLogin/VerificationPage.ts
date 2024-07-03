@@ -1,9 +1,9 @@
 import { Locator, Page, expect } from '@playwright/test';
 import { BasePage } from '../BasePage';
-import { getInboxId, getMessageText } from 'src/utils/emailClient';
 import retry from 'async-retry';
 import { config } from 'src/utils/config';
 import { GettingStartedPage } from '../onboarding/GettingStartedPage';
+import { getEmail } from '../../utils/mailJsClient';
 
 export class VerificationPage extends BasePage {
   readonly verify: Locator;
@@ -13,21 +13,19 @@ export class VerificationPage extends BasePage {
     this.verify = page.getByRole('button', { name: /verify/i });
   }
 
-  async getTokenFromEmailClient(email: string): Promise<string> {
+  async getTokenFromEmailClient(
+    email: string,
+    password: string,
+  ): Promise<string> {
     let message: string;
 
     await retry(async () => {
       try {
-        //Get Message ID
-        const messageId: string = await getInboxId(
-          email,
+        //Get Message
+        message = await getEmail(
+          { username: email, password },
           'Verify your Intraverse email',
         );
-        if (messageId === undefined) {
-          throw new Error(`Cannot get MessageId: ${messageId} ---> Retry`);
-        }
-        // Get Message
-        message = await getMessageText(email, messageId);
         if (message === undefined) {
           throw new Error(`Cannot get Message: ${message} ---> Retry`);
         }

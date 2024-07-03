@@ -8,14 +8,14 @@ import { GettingStartedPage } from '../src/pages/onboarding/GettingStartedPage';
 let loginPage: LoginPage;
 let signUpPage: SignUpPage;
 let verificationPage: VerificationPage;
-let gettingStartedpage: GettingStartedPage;
+let gettingStartedPage: GettingStartedPage;
 let user: User;
 test.describe('Onboarding', () => {
   test.beforeEach('sign up and login', async ({ page }) => {
     loginPage = new LoginPage(page);
     signUpPage = new SignUpPage(page);
     verificationPage = new VerificationPage(page);
-    gettingStartedpage = new GettingStartedPage(page);
+    gettingStartedPage = new GettingStartedPage(page);
     user = await defaultUser();
     await loginPage.landOnPage();
     await loginPage.clickSignUp();
@@ -23,12 +23,13 @@ test.describe('Onboarding', () => {
     await signUpPage.fillAndSubmitSignUpForm(user);
     const token: string = await verificationPage.getTokenFromEmailClient(
       user.email,
+      user.emailClientPassword,
     );
     await verificationPage.enterToken(token);
     await verificationPage.submitToken();
   });
 
   test('Activate a new starter business', async () => {
-    await gettingStartedpage.verifyContentsOnPage();
+    await gettingStartedPage.verifyContentsOnPage();
   });
 });

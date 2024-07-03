@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { devices } from '@playwright/test';
 import { PlaywrightTestConfig } from '@playwright/test';
 import dotenv from 'dotenv';
 import * as process from 'process';
@@ -50,4 +50,4 @@ const config: PlaywrightTestConfig = {
     },
   ],
 };
-//export default config;
+export default config;

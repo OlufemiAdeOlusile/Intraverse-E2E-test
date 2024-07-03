@@ -65,6 +65,5 @@ export class SignUpPage extends BasePage {
         console.log('Submitting a new sign up failed ----> Retry');
       }
     }, config.RETRY_CONFIG);
-    await this.page.pause();
   }
 }
