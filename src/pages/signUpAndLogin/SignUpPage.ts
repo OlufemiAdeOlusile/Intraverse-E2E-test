@@ -1,7 +1,7 @@
 // src/pages/SignUpPage.ts
 
 import { Locator, Page, expect } from '@playwright/test';
-import { BasePage } from './BasePage';
+import { BasePage } from '../BasePage';
 import { User } from 'src/fixtures/user';
 import retry from 'async-retry';
 import { config } from 'src/utils/config';
@@ -57,11 +57,12 @@ export class SignUpPage extends BasePage {
     await retry(async () => {
       try {
         await this.submitButton.click();
-        const verificationPage = new VerificationPage(this.page);
+        const verificationPage: VerificationPage = new VerificationPage(this.page);
         await verificationPage.landOnPage();
       } catch (e) {
         console.log('Submitting a new sign up failed ----> Retry');
       }
     }, config.RETRY_CONFIG);
+    await this.page.pause();
   }
 }

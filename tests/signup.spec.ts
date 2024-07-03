@@ -1,11 +1,12 @@
 import { test } from 'src/fixtures';
 import { User, defaultUser } from 'src/fixtures/user';
-import { LoginPage } from 'src/pages/LoginPage';
-import { SignUpPage } from 'src/pages/SignUpPage';
-import { VerificationPage } from 'src/pages/VerificationPage';
+import { LoginPage } from 'src/pages/signUpAndLogin/LoginPage';
+import { SignUpPage } from 'src/pages/signUpAndLogin/SignUpPage';
+import { VerificationPage } from 'src/pages/signUpAndLogin/VerificationPage';
 
 test.describe('Playwright', () => {
-  test('Sign up a new user if not registered', async ({ page }) => {
+
+  test('Sign up a new user, logout and verify login', async ({ page }) => {
     const loginPage: LoginPage = new LoginPage(page);
     const signUpPage: SignUpPage = new SignUpPage(page);
     const verificationPage: VerificationPage = new VerificationPage(page);
@@ -21,9 +22,7 @@ test.describe('Playwright', () => {
     );
 
     await verificationPage.enterToken(token);
-
     await verificationPage.submitToken();
 
-    await page.pause();
   });
 });

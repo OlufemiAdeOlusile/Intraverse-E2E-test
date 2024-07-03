@@ -1,8 +1,9 @@
 import { Locator, Page, expect } from '@playwright/test';
-import { BasePage } from './BasePage';
+import { BasePage } from '../BasePage';
 import { getInboxId, getMessageText } from 'src/utils/emailClient';
 import retry from 'async-retry';
 import { config } from 'src/utils/config';
+import {GettingStartedPage} from "../onboarding/GettingStartedPage";
 
 export class VerificationPage extends BasePage {
   readonly verify: Locator;
@@ -22,22 +23,22 @@ export class VerificationPage extends BasePage {
           email,
           'Verify your Intraverse email',
         );
-        if (messageId == undefined) {
-          throw new Error('Cannot get MessageId ---> Retry');
+        if (messageId === undefined) {
+          throw new Error(`Cannot get MessageId: ${messageId} ---> Retry`);
         }
         // Get Message
         message = await getMessageText(email, messageId);
-
-        if (message == undefined) {
-          throw new Error('Cannot Get Message');
+        if (message === undefined) {
+          throw new Error(`Cannot get Message: ${message} ---> Retry`);
         }
-      } catch (e) {
-        console.log('Submitting a new sign up failed ----> Retry');
+      } catch(e) {
+        console.log(e);
+        throw new Error('Submitting a new sign up failed ----> Retry')
       }
     }, config.RETRY_CONFIG);
 
     //Matcher to find 6 digit number
-    const codeMatch = message.match(/\b\d{6}\b/);
+    const codeMatch:RegExpMatchArray = message.match(/\b\d{6}\b/);
     return codeMatch ? codeMatch[0] : null;
   }
 
@@ -55,5 +56,7 @@ export class VerificationPage extends BasePage {
 
   async submitToken() {
     await this.verify.click();
+    const gettingStartedPage: GettingStartedPage = new GettingStartedPage(this.page);
+    await gettingStartedPage.landOnPage();
   }
 }

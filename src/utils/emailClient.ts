@@ -10,28 +10,19 @@ export const getInboxId = async (
   email: string,
   subject: string,
 ): Promise<string | undefined> => {
-  try {
     const inbox: YopmailData = await easyYopmail.getInbox(email);
-    const emailItem: Email = inbox.inbox.find((f) =>
+    const emailItem: Email = inbox.inbox.find((f: Email) =>
       f.subject.includes(subject),
     );
+    console.log(emailItem)
     return emailItem?.id;
-  } catch (error) {
-    console.error('Error fetching inbox:', error);
-    return undefined;
-  }
 };
 
 export const getMessageText = async (
   email: string,
   emailID: string,
 ): Promise<string | undefined> => {
-  try {
     const message: EmailContent = await easyYopmail.readMessage(email, emailID);
     console.log(message.content);
     return message.content;
-  } catch (error) {
-    console.error('Error fetching Message:', error);
-    return undefined;
-  }
 };
