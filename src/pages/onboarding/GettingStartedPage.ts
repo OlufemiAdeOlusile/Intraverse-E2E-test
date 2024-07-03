@@ -28,7 +28,7 @@ export class GettingStartedPage extends BasePage {
       name: /start your guide/i,
     });
     this.bookAFlightText = page.getByText(/book a flight/i);
-    this.activateMyBusiness = page.getByText(/activate my business/i);
+    this.activateMyBusiness = page.getByRole('link', { name: 'Activate my business' })
     this.chooseASubscriptionPlan = page.getByText(
       /choose a subscription plan/i,
     );
@@ -48,5 +48,9 @@ export class GettingStartedPage extends BasePage {
     await expect(this.startYourGuideButton).toBeVisible();
     await expect(this.bookAFlightText).toBeVisible();
     await expect(this.startYourGuideButton).toBeVisible();
+  }
+
+  async clickActivateMyBusiness() {
+    await this.activateMyBusiness.click();
   }
 }

@@ -7,30 +7,6 @@ export type mailUser = {
   password: string;
 };
 
-type EmailData = {
-  id: string;
-  msgid: string;
-  from: {
-    address: string;
-    name: string;
-  };
-  to: {
-    address: string;
-    name: string;
-  }[];
-  subject: string;
-  intro: string;
-  seen: boolean;
-  isDeleted: boolean;
-  hasAttachments: boolean;
-  size: number;
-  downloadUrl: string;
-  sourceUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
-  accountId: string;
-};
-
 export async function mailLogin(): Promise<mailUser> {
   const user: mailUser = await createRandomAccount();
   await mailjs.login(user.username, user.password);
@@ -71,15 +47,14 @@ async function createRandomAccount(): Promise<mailUser> {
   }
 }
 
-export async function getEmailIdViaFilter(
+async function getEmailIdViaFilter(
   user: mailUser,
   subject: string,
   seen: boolean = false,
 ): Promise<string> {
-  console.info('Waiting for inbox messages to load...');
   await mailjs.login(user.username, user.password);
   const messages = await mailjs.getMessages();
-  const filteredMessage = messages.data.find((message: EmailData) => {
+  const filteredMessage = messages.data.find((message) => {
     return message.subject.includes(subject) && message.seen === seen;
   });
 

@@ -10,7 +10,7 @@ let signUpPage: SignUpPage;
 let verificationPage: VerificationPage;
 let gettingStartedPage: GettingStartedPage;
 let user: User;
-test.describe('Onboarding', () => {
+test.describe.only('Onboarding', () => {
   test.beforeEach('sign up and login', async ({ page }) => {
     loginPage = new LoginPage(page);
     signUpPage = new SignUpPage(page);
@@ -29,7 +29,9 @@ test.describe('Onboarding', () => {
     await verificationPage.submitToken();
   });
 
-  test('Activate a new starter business', async () => {
+  test('Activate a new starter business', async ({page}) => {
     await gettingStartedPage.verifyContentsOnPage();
+    await page.pause();
+    await gettingStartedPage.clickActivateMyBusiness();
   });
 });

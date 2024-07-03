@@ -62,7 +62,7 @@ export class SignUpPage extends BasePage {
         );
         await verificationPage.landOnPage();
       } catch (e) {
-        console.log('Submitting a new sign up failed ----> Retry');
+        throw new Error('Submitting a new sign up failed ----> Retry')
       }
     }, config.RETRY_CONFIG);
   }
