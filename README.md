@@ -11,11 +11,9 @@
 
 E2E tests for Intraverse APP
 
-
 ## Prerequisites
 
 Before you begin, ensure you have Node.js and npm installed on your machine. If not, follow the installation instructions provided in the [Node.js Package Manager Installation Guide](https://nodejs.org/en/download/package-manager#installing-nodejs-via-package-manager).
-
 
 ## Installation
 
@@ -47,6 +45,4 @@ npx playwright test --headed
 npm run report
 ```
 
-
 ## Test
-

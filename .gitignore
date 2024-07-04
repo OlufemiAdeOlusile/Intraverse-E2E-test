@@ -4,3 +4,4 @@ reports/html/*
 test-results/*
 .idea
 dist/*
+.DS_Store

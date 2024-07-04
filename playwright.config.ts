@@ -1,9 +1,11 @@
-import { defineConfig, devices } from '@playwright/test';
+import { devices } from '@playwright/test';
+import { PlaywrightTestConfig } from '@playwright/test';
 import dotenv from 'dotenv';
+import * as process from 'process';
 
 dotenv.config();
 
-export default defineConfig({
+const config: PlaywrightTestConfig = {
   testDir: './tests',
   timeout: 0,
   expect: {
@@ -45,6 +47,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         launchOptions: { args: ['--disable-gpu', '--disable-dev-shm-usage'] },
       },
-    }
+    },
   ],
-});
+};
+export default config;

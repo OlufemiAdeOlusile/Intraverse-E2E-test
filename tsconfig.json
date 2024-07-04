@@ -11,6 +11,12 @@
     "types": ["node"]
   },
   //"typeRoots": ["./types", "node_modules/@types"],
-  "include": ["src/**/*.ts", "tests/**/*.ts", "easy-yopmail.d.ts"],
+  "include": [
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "easy-yopmail.d.ts",
+    "playwright.config.ts",
+    "node_modules/@types/node/globals.d.ts"
+  ],
   "exclude": ["node_modules"]
 }
