@@ -1,6 +1,13 @@
 import { faker } from '@faker-js/faker';
 import { mailLogin, mailUser } from 'src/utils/mailJsClient';
 
+interface businessDetails {
+  tradingName: string;
+  businessAddress: string;
+  businessPhoneNumber: string;
+  businessEmail: string;
+}
+
 export interface User {
   firstName: string;
   lastName: string;
@@ -8,6 +15,7 @@ export interface User {
   password: string;
   emailClientPassword?: string;
   phoneNumber: string;
+  businessDetail?: businessDetails;
 }
 
 export const defaultUser = async (): Promise<User> => {
@@ -19,5 +27,15 @@ export const defaultUser = async (): Promise<User> => {
     password: '@Test12345',
     phoneNumber: faker.string.numeric(10),
     emailClientPassword: user.password,
+  };
+};
+
+export const signUpUser = async (): Promise<User> => {
+  return {
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    email: 'fl7ab@navalcadets.com',
+    password: '@Test12345',
+    phoneNumber: faker.string.numeric(10),
   };
 };
