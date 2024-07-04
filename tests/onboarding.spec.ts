@@ -29,7 +29,7 @@ test.describe.only('Onboarding', () => {
     await verificationPage.submitToken();
   });
 
-  test('Activate a new starter business', async ({page}) => {
+  test('Activate a new starter business', async ({ page }) => {
     await gettingStartedPage.verifyContentsOnPage();
     await page.pause();
     await gettingStartedPage.clickActivateMyBusiness();
