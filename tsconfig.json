@@ -3,7 +3,8 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "incremental": true,
-    "target": "es6",
+    "target": "ES2021",
+    "strict": false,
     "module": "CommonJS",
     "moduleResolution": "Node",
     "sourceMap": true,
@@ -16,7 +17,6 @@
     "tests/**/*.ts",
     "easy-yopmail.d.ts",
     "playwright.config.ts",
-    "node_modules/@types/node/globals.d.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "src/utils/utility.ts"]
 }
