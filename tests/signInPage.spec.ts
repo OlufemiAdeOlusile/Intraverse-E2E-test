@@ -1,6 +1,6 @@
 import { test } from 'src/fixtures';
 import { User } from 'src/fixtures/user';
-import { LoginPage } from 'src/pages/signUpAndLogin/LoginPage';
+import { LoginPage } from 'src/pages/signUpAndLogin/loginPage';
 
 test.describe('Login', () => {
   test('Sign in an existing user', async ({ page }) => {
@@ -17,6 +17,6 @@ test.describe('Login', () => {
     // Verify the sign-in page
     await loginPage.landOnPage();
 
-    await loginPage.fillAndSubmitSignInForm(existingUser);
+    await loginPage.loginUser(existingUser);
   });
 });

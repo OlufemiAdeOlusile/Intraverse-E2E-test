@@ -1,8 +1,8 @@
 import { test } from 'src/fixtures';
 import { User, defaultUser } from 'src/fixtures/user';
-import { LoginPage } from 'src/pages/signUpAndLogin/LoginPage';
-import { SignUpPage } from 'src/pages/signUpAndLogin/SignUpPage';
-import { VerificationPage } from 'src/pages/signUpAndLogin/VerificationPage';
+import { LoginPage } from 'src/pages/signUpAndLogin/loginPage';
+import { SignUpPage } from 'src/pages/signUpAndLogin/signUpPage';
+import { VerificationPage } from 'src/pages/signUpAndLogin/verificationPage';
 
 test.describe('Sign UP', () => {
   test('Sign up a new user, logout and verify login', async ({ page }) => {

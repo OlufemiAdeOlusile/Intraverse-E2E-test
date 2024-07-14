@@ -1,11 +1,11 @@
-// src/pages/SignUpPage.ts
+// src/pages/signUpPage.ts
 
 import { Locator, Page, expect } from '@playwright/test';
-import { BasePage } from '../BasePage';
+import { BasePage } from '../basePage';
 import { User } from 'src/fixtures/user';
 import retry from 'async-retry';
 import { config } from 'src/utils/config';
-import { VerificationPage } from './VerificationPage';
+import { VerificationPage } from './verificationPage';
 
 export class SignUpPage extends BasePage {
   readonly firstNameInput: Locator;

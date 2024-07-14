@@ -1,8 +1,8 @@
 import { Locator, Page, expect } from '@playwright/test';
-import { BasePage } from '../BasePage';
+import { BasePage } from '../basePage';
 import retry from 'async-retry';
 import { config } from 'src/utils/config';
-import { GettingStartedPage } from '../onboarding/GettingStartedPage';
+import { GettingStartedPage } from '../onboarding/gettingStartedPage';
 import { getEmail } from '../../utils/mailJsClient';
 
 export class VerificationPage extends BasePage {

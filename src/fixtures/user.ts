@@ -90,10 +90,11 @@ export const signUpUser = async (
   intraTypeOfBusiness?: typeOfBusiness,
   position?: companyPosition,
 ): Promise<User> => {
+  const email: string = 'wl1l2@belgianairways.com';
   return {
-    firstName: 'Khalid',
-    lastName: 'Cummerata',
-    email: 'vmisd@belgianairways.com',
+    firstName: 'Elvis',
+    lastName: 'Carroll',
+    email,
     password: '@Test12345',
     phoneNumber: faker.string.numeric(10),
     businessDetail: {
@@ -102,7 +103,7 @@ export const signUpUser = async (
       tradingName: faker.company.name(),
       businessAddress: faker.location.streetAddress(),
       businessPhoneNumber: faker.string.numeric(10),
-      businessEmail: 'vmisd@belgianairways.com',
+      businessEmail: email,
       legalEntity: {
         businessName: faker.company.name(),
         typeOfBusiness: intraTypeOfBusiness || typeOfBusiness.privateLimited,
@@ -113,7 +114,7 @@ export const signUpUser = async (
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
         position: position || companyPosition.director,
-        contactEmail: 'vmisd@belgianairways.com',
+        contactEmail: email,
         contactPhoneNumber: faker.string.numeric(10),
       },
     },
