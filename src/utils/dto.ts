@@ -1,14 +1,23 @@
 import { Locator, Page } from '@playwright/test';
 
 export const ROLE_NAMES = {
-  TEXT_BOX: 'textbox' as 'textbox',
-  BUTTON: 'button' as 'button',
-  HEADING: 'heading' as 'heading',
-  COMBO_BOX: 'combobox' as 'combobox',
-};
+  TEXT_BOX: 'textbox',
+  BUTTON: 'button',
+  HEADING: 'heading',
+  COMBO_BOX: 'combobox',
+  LINK: 'link',
+} as const;
 
 export const getByButton = async (page: Page, regex: RegExp) => {
   return page.getByRole(ROLE_NAMES.BUTTON, { name: regex });
+};
+
+export const getByLink = async (page: Page, regex: RegExp) => {
+  return page.getByRole(ROLE_NAMES.LINK, { name: regex });
+};
+
+export const getByHeading = async (page: Page, regex: RegExp) => {
+  return page.getByRole(ROLE_NAMES.HEADING, { name: regex });
 };
 export const getByTextBox = async (page: Page, regex: RegExp) => {
   return page.getByRole(ROLE_NAMES.TEXT_BOX, { name: regex });
@@ -41,6 +50,10 @@ export const clickByButton = async (
   await (await getByButton(page, regex)).click();
 };
 
+export const clickByLink = async (page: Page, regex: RegExp): Promise<void> => {
+  await (await getByLink(page, regex)).click();
+};
+
 export const verifyTextViaTextSelector = async (
   page: Page,
   selectorString: string,
@@ -68,4 +81,9 @@ export const chooseFromDropDownByRole = async (
   await optionLocator.waitFor();
   await optionLocator.scrollIntoViewIfNeeded();
   await optionLocator.click();
+};
+
+export const verifyTextByRole = async (page: Page, text: string) => {
+  const regex: RegExp = new RegExp(text.toLowerCase(), 'i');
+  await page.getByText(regex).waitFor({ state: 'visible' });
 };

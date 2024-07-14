@@ -1,13 +1,17 @@
 import { test } from 'src/fixtures';
-import { businessType, defaultUser, signUpUser, User } from 'src/fixtures/user';
+import { businessType, companyPosition, defaultUser, typeOfBusiness, User } from 'src/fixtures/user';
 import { LoginPage } from 'src/pages/signUpAndLogin/LoginPage';
 import { SignUpPage } from 'src/pages/signUpAndLogin/SignUpPage';
 import { VerificationPage } from 'src/pages/signUpAndLogin/VerificationPage';
 import { GettingStartedPage } from '../src/pages/onboarding/GettingStartedPage';
 import {
-  selectAndFillBusinessDetails,
+  fillKeyContact,
   fillLegalEntity,
-  startBusinessActivation, fillKeyContact, uploadDocuments,
+  selectAndFillBusinessDetails,
+  startBusinessActivation,
+  submitForReview,
+  uploadDocuments,
+  weHaveReceivedYourActivation,
 } from 'src/pages/onboarding/gettingStartedFlow';
 
 let loginPage: LoginPage;
@@ -18,13 +22,6 @@ let user: User;
 
 test.describe.only('Onboarding', () => {
   test.beforeEach('sign up and login', async ({ page }) => {
-    /* loginPage = new LoginPage(page);
-    gettingStartedPage = new GettingStartedPage(page);
-    user = await signUpUser(businessType.starterBusiness);
-    await loginPage.landOnPage();
-    await loginPage.fillAndSubmitSignInForm(user);
-    await gettingStartedPage.landOnPage();*/
-
     signUpPage = new SignUpPage(page);
     verificationPage = new VerificationPage(page);
     gettingStartedPage = new GettingStartedPage(page);
@@ -43,12 +40,99 @@ test.describe.only('Onboarding', () => {
   });
 
   test('Activate a new starter business', async ({ page }) => {
+    user = {
+      ...user,
+      businessDetail: {
+        ...user.businessDetail,
+        businessType: businessType.starterBusiness,
+        keyContact: {
+          ...user.businessDetail.keyContact,
+
+          //CHANGE TO OWNER ONCE BUG IS FIXED
+          position: companyPosition.shareHolder
+        }
+      },
+    };
     await gettingStartedPage.verifyContentsOnPage();
     await gettingStartedPage.clickActivateMyBusiness();
     await startBusinessActivation(page);
     await selectAndFillBusinessDetails(page, user);
     await fillLegalEntity(page, user);
     await fillKeyContact(page, user);
-    await uploadDocuments(page)
+    await uploadDocuments(page, user);
+    await submitForReview(page, user);
+    await weHaveReceivedYourActivation(page);
+    await gettingStartedPage.verifyBusinessUnderReview();
+  });
+
+  test('Activate a new registered business without IATA', async ({ page }) => {
+    user = {
+      ...user,
+      businessDetail: {
+        ...user.businessDetail,
+        businessType: businessType.registeredBusinessWithoutIata,
+        legalEntity: {
+          ...user.businessDetail.legalEntity,
+          typeOfBusiness: typeOfBusiness.nonRegistered,
+        },
+        keyContact: {
+          ...user.businessDetail.keyContact,
+          position: companyPosition.shareHolder
+        }
+      },
+    };
+    await gettingStartedPage.verifyContentsOnPage();
+    await gettingStartedPage.clickActivateMyBusiness();
+    await startBusinessActivation(page);
+    await selectAndFillBusinessDetails(page, user);
+    await fillLegalEntity(page, user);
+    await fillKeyContact(page, user);
+    await uploadDocuments(page, user);
+    await submitForReview(page, user);
+    await weHaveReceivedYourActivation(page);
+    await gettingStartedPage.verifyBusinessUnderReview();
+  });
+
+  test('Activate a new registered business without IATA and sole proprietorship', async ({ page }) => {
+    user = {
+      ...user,
+      businessDetail: {
+        ...user.businessDetail,
+        businessType: businessType.registeredBusinessWithoutIata,
+        legalEntity: {
+          ...user.businessDetail.legalEntity,
+          typeOfBusiness: typeOfBusiness.soleProprietor,
+        },
+        keyContact: {
+          ...user.businessDetail.keyContact,
+          position: companyPosition.shareHolder
+        }
+      },
+    };
+    await gettingStartedPage.verifyContentsOnPage();
+    await gettingStartedPage.clickActivateMyBusiness();
+    await startBusinessActivation(page);
+    await selectAndFillBusinessDetails(page, user);
+    await fillLegalEntity(page, user);
+    await fillKeyContact(page, user);
+    await uploadDocuments(page, user);
+    await submitForReview(page, user);
+    await weHaveReceivedYourActivation(page);
+    await gettingStartedPage.verifyBusinessUnderReview();
+  });
+
+  test('Activate a new registered business with IATA', async ({
+    page,
+  }) => {
+    await gettingStartedPage.verifyContentsOnPage();
+    await gettingStartedPage.clickActivateMyBusiness();
+    await startBusinessActivation(page);
+    await selectAndFillBusinessDetails(page, user);
+    await fillLegalEntity(page, user);
+    await fillKeyContact(page, user);
+    await uploadDocuments(page, user);
+    await submitForReview(page, user);
+    await weHaveReceivedYourActivation(page);
+    await gettingStartedPage.verifyBusinessUnderReview();
   });
 });

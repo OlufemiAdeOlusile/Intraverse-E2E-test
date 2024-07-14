@@ -13,6 +13,7 @@ export class GettingStartedPage extends BasePage {
   readonly activateMyBusiness: Locator;
   readonly chooseASubscriptionPlan: Locator;
   readonly addCompanyLogo: Locator;
+  readonly businessUnderReview: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -35,10 +36,15 @@ export class GettingStartedPage extends BasePage {
       /choose a subscription plan/i,
     );
     this.addCompanyLogo = page.getByText(/add company logo/i);
+    this.businessUnderReview = page.getByText(/business under review/i);
   }
 
   async landOnPage() {
     await expect(this.gettingStartedText.first()).toBeVisible();
+  }
+
+  async verifyBusinessUnderReview() {
+    await expect(this.businessUnderReview).toBeVisible();
   }
 
   async verifyContentsOnPage() {

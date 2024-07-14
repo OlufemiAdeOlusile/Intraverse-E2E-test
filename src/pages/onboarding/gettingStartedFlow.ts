@@ -4,12 +4,14 @@ import { businessType, User } from '../../fixtures/user';
 import {
   chooseFromDropDownByRole,
   clickByButton,
+  clickByLink,
   fillByRoleTextBox,
   fillBySelector,
+  getByHeading,
   ROLE_NAMES,
+  verifyTextByRole,
   verifyTextViaTextSelector,
 } from '../../utils/dto';
-import * as path from 'path';
 import { getUploadDocFilePath } from '../../utils/utility';
 
 const activateBusinessLocators = {
@@ -53,9 +55,10 @@ const keyContact = {
 };
 
 const uploadDocument = {
-  kindlyUploadHeading: /kindly upload your cac document below to verify your business\./i,
-  uploadAndContinue: /upload and continue/i
-}
+  kindlyUploadHeading:
+    /kindly upload your cac document below to verify your business\./i,
+  uploadAndContinue: /upload and continue/i,
+};
 
 export const startBusinessActivation = async (page: Page) => {
   await verifyHeadingForActivateBusiness(page);
@@ -79,6 +82,7 @@ export const fillLegalEntity = async (page: Page, user: User) => {
     await page
       .getByText(legalEntity.asARegulatedBody)
       .waitFor({ state: 'visible' });
+    await clickByButton(page, legalEntity.continueButton);
   } else {
     await fillByRoleTextBox(
       page,
@@ -100,8 +104,8 @@ export const fillLegalEntity = async (page: Page, user: User) => {
       legalEntity.typeOfRegisteredBusiness,
       user.businessDetail.legalEntity.typeOfBusiness,
     );
+    await clickByButton(page, legalEntity.nextButton);
   }
-  await clickByButton(page, legalEntity.nextButton);
 };
 
 export const fillKeyContact = async (page: Page, user: User) => {
@@ -109,43 +113,90 @@ export const fillKeyContact = async (page: Page, user: User) => {
     .getByText(keyContact.businessRepTextHeading)
     .waitFor({ state: 'visible' });
 
-  await fillByRoleTextBox(page,keyContact.firstName, user.businessDetail.keyContact.firstName);
-  await fillByRoleTextBox(page,keyContact.lastName, user.businessDetail.keyContact.lastName);
-  await fillByRoleTextBox(page,keyContact.contactEmail, user.businessDetail.keyContact.contactEmail);
-  await fillBySelector(page,keyContact.contactPhoneNumber, user.businessDetail.keyContact.contactPhoneNumber)
-  await chooseFromDropDownByRole(page, keyContact.position, user.businessDetail.keyContact.position)
+  await fillByRoleTextBox(
+    page,
+    keyContact.firstName,
+    user.businessDetail.keyContact.firstName,
+  );
+  await fillByRoleTextBox(
+    page,
+    keyContact.lastName,
+    user.businessDetail.keyContact.lastName,
+  );
+  await fillByRoleTextBox(
+    page,
+    keyContact.contactEmail,
+    user.businessDetail.keyContact.contactEmail,
+  );
+  await fillBySelector(
+    page,
+    keyContact.contactPhoneNumber,
+    user.businessDetail.keyContact.contactPhoneNumber,
+  );
+  await chooseFromDropDownByRole(
+    page,
+    keyContact.position,
+    user.businessDetail.keyContact.position,
+  );
   await clickByButton(page, businessDetails.nextButton);
 };
 
-export const uploadDocuments = async (page: Page) =>{
-  await page
-    .getByText(uploadDocument.kindlyUploadHeading)
-    .waitFor({ state: 'visible' });
+export const uploadDocuments = async (page: Page, user: User) => {
+  if (user.businessDetail.businessType.includes(businessType.starterBusiness)) {
+    await clickByButton(page, /continue/i);
+  } else {
+    await page
+      .getByText(uploadDocument.kindlyUploadHeading)
+      .waitFor({ state: 'visible' });
 
-  const fileInputs = [
-    { label: 'CAC Certification Doc' },
-    { label: 'CAC C02 Doc' },
-    { label: 'CAC C07 Doc' },
-    { label: 'Identity Verification Doc' }
-  ];
+    const absoluteFilePath: string = getUploadDocFilePath();
+    const buttons = await page.locator('button:has-text("Choose File")');
 
-  // Get the absolute path of the file to be uploaded
-  const absoluteFilePath: string = getUploadDocFilePath()
+    const buttonCount = await buttons.count();
+    for (let i = 0; i < buttonCount; i++) {
+      const button = buttons.nth(i);
+      const fileChooserPromise = page.waitForEvent('filechooser');
+      await button.click();
+      const fileChooser = await fileChooserPromise;
+      await fileChooser.setFiles(absoluteFilePath);
+    }
+    await clickByButton(page, uploadDocument.uploadAndContinue);
+  }
+};
 
-  // Iterate over the file inputs to upload the file
-  for (const input of fileInputs) {
-    // Find the section by label text
-    const section = page.locator(`text=${input.label}`);
+export const submitForReview = async (page: Page, user: User) => {
+  //await verifyTextByRole(page, user.businessDetail.businessType);
+  await verifyTextByRole(page, user.businessDetail.tradingName);
+  await verifyTextByRole(page, user.businessDetail.businessAddress);
 
-    // Locate the file input within the section
-    const fileInputLocator = section.locator('input[type="file"]');
-
-    // Wait for the file input to be present and upload the file
-    await fileInputLocator.setInputFiles(absoluteFilePath);
+  if (
+    !user.businessDetail.businessType.includes(businessType.starterBusiness)
+  ) {
+    await verifyTextByRole(page, user.businessDetail.legalEntity.businessName);
+    await verifyTextByRole(page, user.businessDetail.legalEntity.businessName);
+    await verifyTextByRole(
+      page,
+      user.businessDetail.legalEntity.typeOfBusiness,
+    );
+    await verifyTextByRole(
+      page,
+      user.businessDetail.legalEntity.taxIdentificationNumber,
+    );
   }
 
-  await clickByButton(page, uploadDocument.uploadAndContinue);
-}
+  await verifyTextByRole(page, user.businessDetail.keyContact.firstName);
+  await verifyTextByRole(page, user.businessDetail.keyContact.lastName);
+  await verifyTextByRole(page, user.businessDetail.keyContact.position);
+
+  await clickByButton(page, /submit for review/i);
+};
+
+export const weHaveReceivedYourActivation = async (page: Page) => {
+  await (
+    await getByHeading(page, /we have received your activation request/i)
+  ).waitFor({ state: 'visible' });
+  await clickByLink(page, /continue/i);
+};
 
 const verifyHeadingForActivateBusiness = async (page: Page) => {
   await expect(
@@ -168,7 +219,7 @@ const fillBusinessDetailsForm = async (page: Page, user: User) => {
   await fillByRoleTextBox(
     page,
     businessDetails.tradingName,
-    user.businessDetail.businessType,
+    user.businessDetail.tradingName,
   );
   await fillByRoleTextBox(
     page,

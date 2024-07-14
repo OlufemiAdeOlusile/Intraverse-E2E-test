@@ -16,7 +16,7 @@
     "src/**/*.ts",
     "tests/**/*.ts",
     "easy-yopmail.d.ts",
-    "playwright.config.ts",
+    "playwright.config.ts"
   ],
-  "exclude": ["node_modules", "src/utils/utility.ts"]
+  "exclude": ["node_modules"]
 }
