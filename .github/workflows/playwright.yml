@@ -23,7 +23,6 @@ jobs:
 
       - name: Install dependencies and browsers
         run: |
-          cd intra-test
           npm install
           npx playwright install
 
