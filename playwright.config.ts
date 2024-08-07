@@ -2,6 +2,8 @@ import { devices } from '@playwright/test';
 import { PlaywrightTestConfig } from '@playwright/test';
 import dotenv from 'dotenv';
 import * as process from 'process';
+import fetch from 'node-fetch';
+
 
 dotenv.config();
 
