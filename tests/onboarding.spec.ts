@@ -29,7 +29,7 @@ let verificationPage: VerificationPage;
 let gettingStartedPage: GettingStartedPage;
 let user: User;
 
-test.describe.only('Onboarding', () => {
+test.describe('Onboarding', () => {
   test.beforeEach('sign up and login', async ({ page }) => {
     signUpPage = new SignUpPage(page);
     verificationPage = new VerificationPage(page);
