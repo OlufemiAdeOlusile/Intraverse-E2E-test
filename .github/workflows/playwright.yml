@@ -29,5 +29,10 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          cd intra-test
           npx playwright test
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_ADMIN_URL: ${{ secrets.API_ADMIN_URL }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
