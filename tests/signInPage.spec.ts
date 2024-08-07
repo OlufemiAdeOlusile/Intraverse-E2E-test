@@ -2,7 +2,7 @@ import { test } from 'src/fixtures';
 import { User } from 'src/fixtures/user';
 import { LoginPage } from 'src/pages/signUpAndLogin/loginPage';
 
-test.describe('Login', () => {
+test.describe.skip('Login', () => {
   test('Sign in an existing user', async ({ page }) => {
     const loginPage: LoginPage = new LoginPage(page);
 

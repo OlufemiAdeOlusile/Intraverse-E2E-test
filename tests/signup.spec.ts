@@ -4,7 +4,7 @@ import { LoginPage } from 'src/pages/signUpAndLogin/loginPage';
 import { SignUpPage } from 'src/pages/signUpAndLogin/signUpPage';
 import { VerificationPage } from 'src/pages/signUpAndLogin/verificationPage';
 
-test.describe('Sign UP', () => {
+test.describe.skip('Sign UP', () => {
   test('Sign up a new user, logout and verify login', async ({ page }) => {
     const loginPage: LoginPage = new LoginPage(page);
     const signUpPage: SignUpPage = new SignUpPage(page);

@@ -44,3 +44,10 @@ jobs:
           API_ADMIN_URL: ${{ secrets.API_ADMIN_URL }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+
+      - name: Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: index
+          path: reports/html
