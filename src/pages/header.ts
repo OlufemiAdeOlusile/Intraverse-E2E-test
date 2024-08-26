@@ -11,6 +11,7 @@ const lowerHeader = {
   ordersTab: /orders/i,
   dashboard: /dashboard/i,
   home: /home/i,
+  myWebsite: /my website/i,
 };
 
 export const header = {
@@ -29,5 +30,11 @@ export const header = {
     await page
       .getByRole(ROLE_NAMES.TAB, { name: lowerHeader.subscriptionTab })
       .waitFor({ state: 'hidden' });
+  },
+
+  async verifyMyWebsite(page: Page) {
+    await page
+      .getByRole(ROLE_NAMES.TAB, { name: lowerHeader.myWebsite })
+      .waitFor({ state: 'visible' });
   },
 };

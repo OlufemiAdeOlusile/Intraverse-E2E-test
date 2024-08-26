@@ -32,9 +32,9 @@ export class GettingStartedPage extends BasePage {
     this.activateMyBusiness = page.getByRole('link', {
       name: 'Activate my business',
     });
-    this.chooseASubscriptionPlan = page.getByText(
-      /choose a subscription plan/i,
-    );
+    this.chooseASubscriptionPlan = page.getByRole('link', {
+      name: 'Choose a subscription plan',
+    });
     this.addCompanyLogo = page.getByText(/add company logo/i);
     this.businessUnderReview = page.getByText(/business under review/i);
   }
@@ -60,5 +60,9 @@ export class GettingStartedPage extends BasePage {
 
   async clickActivateMyBusiness() {
     await this.activateMyBusiness.click();
+  }
+
+  async clickChooseASubscriptionPlan() {
+    await this.chooseASubscriptionPlan.click();
   }
 }

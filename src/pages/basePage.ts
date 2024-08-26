@@ -10,4 +10,8 @@ export class BasePage {
   and() {
     return this;
   }
+
+  async navigateToSubscription(page: Page, baseUrl: string) {
+    await page.goto(baseUrl + '/settings/agency/subscription');
+  }
 }

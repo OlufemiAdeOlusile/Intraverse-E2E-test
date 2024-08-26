@@ -7,6 +7,8 @@ export const ROLE_NAMES = {
   COMBO_BOX: 'combobox',
   LINK: 'link',
   TAB: 'tab',
+  CHECKBOX: 'checkbox',
+  OPTION: 'option',
 } as const;
 
 export const getByButton = async (page: Page, regex: RegExp) => {

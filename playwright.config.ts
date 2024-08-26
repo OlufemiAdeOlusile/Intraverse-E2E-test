@@ -2,8 +2,6 @@ import { devices } from '@playwright/test';
 import { PlaywrightTestConfig } from '@playwright/test';
 import dotenv from 'dotenv';
 import * as process from 'process';
-import fetch from 'node-fetch';
-
 
 dotenv.config();
 
@@ -14,9 +12,10 @@ const config: PlaywrightTestConfig = {
     timeout: 100000,
   },
   fullyParallel: false,
+  maxFailures: 1,
   forbidOnly: !!process.env.CI,
   retries: 2,
-  workers: undefined,
+  workers: 1,
   reporter: [
     ['list'],
     [
