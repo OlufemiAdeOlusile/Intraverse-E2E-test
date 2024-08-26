@@ -35,7 +35,11 @@ export class GettingStartedPage extends BasePage {
     this.chooseASubscriptionPlan = page.getByRole('link', {
       name: 'Choose a subscription plan',
     });
-    this.addCompanyLogo = page.getByText(/add company logo/i);
+
+    this.addCompanyLogo = page.getByRole('link', {
+      name: /add company logo/i,
+    });
+
     this.businessUnderReview = page.getByText(/business under review/i);
   }
 
@@ -64,5 +68,13 @@ export class GettingStartedPage extends BasePage {
 
   async clickChooseASubscriptionPlan() {
     await this.chooseASubscriptionPlan.click();
+  }
+
+  async clickAddCompanyLogo() {
+    await this.addCompanyLogo.click();
+  }
+
+  async verifyAddCompanyLogoToBeHidden() {
+    await expect(this.addCompanyLogo).toBeHidden();
   }
 }

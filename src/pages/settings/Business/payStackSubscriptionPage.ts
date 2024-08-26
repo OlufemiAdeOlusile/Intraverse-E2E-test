@@ -1,7 +1,7 @@
 import { Locator, Page } from '@playwright/test';
-import { BasePage } from '../../basePage';
+import { SettingsPage } from '../settingsPage';
 
-export class PayStackSubscriptionPage extends BasePage {
+export class PayStackSubscriptionPage extends SettingsPage {
   readonly success: Locator;
   readonly bankAuthentication: Locator;
   readonly declined: Locator;

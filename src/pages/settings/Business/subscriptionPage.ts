@@ -1,8 +1,8 @@
 import { Locator, Page, expect } from '@playwright/test';
 import { ROLE_NAMES } from '../../../utils/dto';
-import { BasePage } from '../../basePage';
+import { SettingsPage } from '../settingsPage';
 
-export class SubscriptionPage extends BasePage {
+export class SubscriptionPage extends SettingsPage {
   readonly subscribeButton: Locator;
   readonly learnAboutSubscription: Locator;
   readonly confirmSubscription: Locator;
@@ -40,7 +40,7 @@ export class SubscriptionPage extends BasePage {
     this.confirmSubscriptionTermsCheckBox = page.getByRole(
       ROLE_NAMES.CHECKBOX,
       {
-        name: /i agree to the main services agreement, privacy policy, terms and conditions for any applicable add\-ons\. i understand my subscription starts today\./i,
+        name: /i agree to the main services agreement, privacy policy, terms and conditions for any applicable add-ons\. i understand my subscription starts today\./i,
       },
     );
     this.planDropdown = page.getByRole(ROLE_NAMES.COMBO_BOX, {

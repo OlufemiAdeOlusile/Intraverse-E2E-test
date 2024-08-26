@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { FileChooser, Page } from 'playwright';
 import { expect } from 'playwright/test';
 import { businessType, User } from '../../fixtures/user';
 import {
@@ -13,6 +13,7 @@ import {
   verifyTextViaTextSelector,
 } from '../../utils/dto';
 import { getUploadDocFilePath } from '../../utils/utility';
+import { Locator } from '@playwright/test';
 
 const activateBusinessLocators = {
   addButton: /add/i,
@@ -150,14 +151,17 @@ export const uploadDocuments = async (page: Page, user: User) => {
       .waitFor({ state: 'visible' });
 
     const absoluteFilePath: string = getUploadDocFilePath();
-    const buttons = await page.locator('button:has-text("Choose File")');
+    const buttons: Locator = await page.locator(
+      'button:has-text("Choose File")',
+    );
 
-    const buttonCount = await buttons.count();
-    for (let i = 0; i < buttonCount; i++) {
-      const button = buttons.nth(i);
-      const fileChooserPromise = page.waitForEvent('filechooser');
+    const buttonCount: number = await buttons.count();
+    for (let i: number = 0; i < buttonCount; i++) {
+      const button: Locator = buttons.nth(i);
+      const fileChooserPromise: Promise<FileChooser> =
+        page.waitForEvent('filechooser');
       await button.click();
-      const fileChooser = await fileChooserPromise;
+      const fileChooser: FileChooser = await fileChooserPromise;
       await fileChooser.setFiles(absoluteFilePath);
     }
     await clickByButton(page, uploadDocument.uploadAndContinue);

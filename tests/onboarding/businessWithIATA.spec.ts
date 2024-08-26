@@ -20,6 +20,7 @@ import { SubscriptionPage } from '../../src/pages/settings/Business/subscription
 import { BrowserContext, Page } from '@playwright/test';
 import process from 'process';
 import { PayStackSubscriptionPage } from '../../src/pages/settings/Business/payStackSubscriptionPage';
+import { BrandPage } from '../../src/pages/settings/Business/brandPage';
 
 const { BASE_URL } = process.env;
 let context: BrowserContext;
@@ -30,6 +31,7 @@ let verificationPage: VerificationPage;
 let gettingStartedPage: GettingStartedPage;
 let subscriptionPage: SubscriptionPage;
 let paystackPage: PayStackSubscriptionPage;
+let brandPage: BrandPage;
 let user: User;
 
 test.describe('Onboarding a business with IATA and subscribe', (): void => {
@@ -44,6 +46,7 @@ test.describe('Onboarding a business with IATA and subscribe', (): void => {
     subscriptionPage = new SubscriptionPage(page);
     loginPage = new LoginPage(page);
     paystackPage = new PayStackSubscriptionPage(page);
+    brandPage = new BrandPage(page);
 
     user = await defaultUser();
   });
@@ -134,6 +137,20 @@ test.describe('Onboarding a business with IATA and subscribe', (): void => {
       await header.verifyNoSubscription(page);
       await gettingStartedPage.navigateToSubscription(page, BASE_URL);
       await subscriptionPage.verifyUltimateSubscription();
+      await subscriptionPage.clickGoBack();
+    });
+  });
+
+  test.describe('Choose Logo', async () => {
+    test('add company logo', async (): Promise<void> => {
+      await gettingStartedPage.clickAddCompanyLogo();
+      await brandPage.landOnPage();
+      await brandPage.uploadLogoImage();
+    });
+
+    test('Confirm Logo', async (): Promise<void> => {
+      await subscriptionPage.clickGoBack();
+      await gettingStartedPage.verifyAddCompanyLogoToBeHidden();
     });
   });
 });
