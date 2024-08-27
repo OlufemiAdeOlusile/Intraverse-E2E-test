@@ -1,5 +1,8 @@
 import { Locator, Page } from '@playwright/test';
-import { SettingsPage } from '../settingsPage';
+import { SettingsPage } from '../../settingsPage';
+import retry from 'async-retry';
+import { getEmail } from '../../../../utils/mailJsClient';
+import { config } from '../../../../utils/config';
 
 export class PayStackSubscriptionPage extends SettingsPage {
   readonly success: Locator;
@@ -47,6 +50,25 @@ export class PayStackSubscriptionPage extends SettingsPage {
     this.cancelLinkButton = this.testCards.locator(
       'button[data-testid="cancelLink"]',
     );
+  }
+
+  async verifyEmailFromPayStack(
+    email: string,
+    password: string,
+    subject: string,
+  ): Promise<void> {
+    let message: string;
+    await retry(async (): Promise<void> => {
+      try {
+        message = await getEmail({ username: email, password }, subject);
+        if (message === undefined) {
+          throw new Error(`Cannot get Message: ${message} ---> Retry`);
+        }
+      } catch (e) {
+        console.log(e);
+        throw new Error('Submitting a new sign up failed ----> Retry');
+      }
+    }, config.RETRY_CONFIG);
   }
 
   async chooseSuccess() {

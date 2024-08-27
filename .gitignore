@@ -5,3 +5,4 @@ test-results/*
 .idea
 dist/*
 .DS_Store
+.env

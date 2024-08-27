@@ -1,6 +1,6 @@
 import { Locator, Page, expect } from '@playwright/test';
-import { ROLE_NAMES } from '../../../utils/dto';
-import { SettingsPage } from '../settingsPage';
+import { ROLE_NAMES } from '../../../../utils/dto';
+import { SettingsPage } from '../../settingsPage';
 
 export class SubscriptionPage extends SettingsPage {
   readonly subscribeButton: Locator;
@@ -25,6 +25,8 @@ export class SubscriptionPage extends SettingsPage {
   readonly subscriptionUltimatePlan: Locator;
   readonly cancelSubscription: Locator;
   readonly yesCancel: Locator;
+  readonly changeSubscription: Locator;
+  readonly successAlert: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -86,9 +88,13 @@ export class SubscriptionPage extends SettingsPage {
     this.cancelSubscription = page.getByRole(ROLE_NAMES.BUTTON, {
       name: /cancel/i,
     });
+    this.changeSubscription = page.getByRole(ROLE_NAMES.BUTTON, {
+      name: /change/i,
+    });
     this.yesCancel = page.getByRole(ROLE_NAMES.BUTTON, {
       name: /yes, cancel/i,
     });
+    this.successAlert = page.getByText('Successfull');
   }
 
   async landOnPage() {
@@ -184,5 +190,13 @@ export class SubscriptionPage extends SettingsPage {
   async cancelActiveSubscription() {
     await this.cancelSubscription.click();
     await this.yesCancel.click();
+  }
+
+  async clickChangeSubscription() {
+    await this.changeSubscription.click();
+  }
+
+  async verifySuccessAlert() {
+    await expect(this.successAlert).toBeVisible();
   }
 }

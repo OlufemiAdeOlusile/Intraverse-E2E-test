@@ -21,10 +21,10 @@ import {
 import { getAgentAccountId } from '../../src/api/client/agent/agentAccount';
 import { verifyBusinessViaAdmin } from '../../src/api/client/admin/adminAccount';
 import { header } from '../../src/pages/header';
-import { SubscriptionPage } from '../../src/pages/settings/Business/subscriptionPage';
+import { SubscriptionPage } from '../../src/pages/settings/Business/subscription/subscriptionPage';
 import { BrowserContext, Page } from '@playwright/test';
 import process from 'process';
-import { PayStackSubscriptionPage } from '../../src/pages/settings/Business/payStackSubscriptionPage';
+import { PayStackSubscriptionPage } from '../../src/pages/settings/Business/subscription/payStackSubscriptionPage';
 
 const { BASE_URL } = process.env;
 let context: BrowserContext;
@@ -59,7 +59,7 @@ test.describe('Onboarding a starter business and subscribe', (): void => {
         keyContact: {
           ...user.businessDetail.keyContact,
 
-          //CHANGE TO OWNER ONCE BUG IS FIXED
+          // CHANGE TO OWNER ONCE BUG IS FIXED
           position: companyPosition.shareHolder,
         },
       },
@@ -70,70 +70,65 @@ test.describe('Onboarding a starter business and subscribe', (): void => {
     await context.close();
   });
 
-  test('sign up and login', async (): Promise<void> => {
-    await loginPage.landOnPage();
-    await loginPage.clickSignUp();
-    await signUpPage.clickSignUpWithEmail();
-    await signUpPage.fillAndSubmitSignUpForm(user);
-    const token: string = await verificationPage.getTokenFromEmailClient(
-      user.email,
-      user.emailClientPassword,
-    );
-    await verificationPage.enterToken(token);
-    await verificationPage.submitToken();
-  });
+  test('Complete Onboarding and Subscription Process', async (): Promise<void> => {
+    await test.step('Sign up and login', async () => {
+      await loginPage.landOnPage();
+      await loginPage.clickSignUp();
+      await signUpPage.clickSignUpWithEmail();
+      await signUpPage.fillAndSubmitSignUpForm(user);
+      const token: string = await verificationPage.getTokenFromEmailClient(
+        user.email,
+        user.emailClientPassword,
+      );
+      await verificationPage.enterToken(token);
+      await verificationPage.submitToken();
+    });
 
-  test.describe('Onboard a starter business', () => {
-    test('Verify Getting Started Page', async (): Promise<void> => {
+    await test.step('Verify Getting Started Page', async () => {
       await header.verifyNoSubscription(page);
       await gettingStartedPage.verifyContentsOnPage();
     });
 
-    test('Navigate and select business Details', async (): Promise<void> => {
+    await test.step('Navigate and select business details', async () => {
       await gettingStartedPage.clickActivateMyBusiness();
       await startBusinessActivation(page);
       await selectAndFillBusinessDetails(page, user);
     });
 
-    test('Fill legal Entity', async (): Promise<void> => {
+    await test.step('Fill legal entity', async () => {
       await fillLegalEntity(page, user);
     });
 
-    test('Fill key Contact', async (): Promise<void> => {
+    await test.step('Fill key contact', async () => {
       await fillKeyContact(page, user);
     });
 
-    test('Upload Documents', async (): Promise<void> => {
+    await test.step('Upload documents', async () => {
       await uploadDocuments(page, user);
     });
 
-    test('Submit and verify Business Under Review', async (): Promise<void> => {
+    await test.step('Submit and verify business under review', async () => {
       await submitForReview(page, user);
       await weHaveReceivedYourActivation(page);
       await gettingStartedPage.verifyBusinessUnderReview();
     });
 
-    test('Verify Business via Admin', async (): Promise<void> => {
+    await test.step('Verify business via admin', async () => {
       const accountId: string = await getAgentAccountId(user);
       await verifyBusinessViaAdmin(accountId, user);
     });
 
-    test('Verify Subscription process is shown as next process for onboarding', async (): Promise<void> => {
+    await test.step('Verify subscription process is shown as next step', async () => {
       await header.logout(page);
       await loginPage.landOnPage();
       await loginPage.loginUser(user);
       await header.verifySubscription(page);
     });
-  });
 
-  test.describe('Subscribe to a monthly starter plan and cancel', async () => {
-    test('Navigate to subscription', async (): Promise<void> => {
+    await test.step('Navigate to subscription and choose a plan', async () => {
       await gettingStartedPage.clickChooseASubscriptionPlan();
       await subscriptionPage.landOnPage();
       await subscriptionPage.clickSubscribe();
-    });
-
-    test('Choose a monthly starter subscription plan', async (): Promise<void> => {
       await subscriptionPage.verifySubscriptionButtonDisabled();
       await subscriptionPage.selectPlan('starter');
       await subscriptionPage.verifyMonthlyStarterFee();
@@ -141,18 +136,28 @@ test.describe('Onboarding a starter business and subscribe', (): void => {
       await subscriptionPage.confirmSubscriptionAction();
     });
 
-    test('Pay via Paystack', async (): Promise<void> => {
+    await test.step('Pay via Paystack', async () => {
       await paystackPage.chooseSuccess();
       await paystackPage.clickPaymentButton();
     });
 
-    test('Confirm Subscription and cancel', async (): Promise<void> => {
+    await test.step('Confirm subscription and cancel', async () => {
       await subscriptionPage.verifySuccessfulSubscription();
       await header.verifyMyWebsite(page);
       await header.verifyNoSubscription(page);
       await gettingStartedPage.navigateToSubscription(page, BASE_URL);
       await subscriptionPage.verifyStarterSubscription();
+      await paystackPage.verifyEmailFromPayStack(
+        user.email,
+        user.emailClientPassword,
+        'Your subscription to Starter is now active',
+      );
       await subscriptionPage.cancelActiveSubscription();
+      await paystackPage.verifyEmailFromPayStack(
+        user.email,
+        user.emailClientPassword,
+        'Subscription disabled',
+      );
     });
   });
 });

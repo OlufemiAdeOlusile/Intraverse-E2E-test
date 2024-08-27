@@ -22,10 +22,10 @@ import {
 import { getAgentAccountId } from '../../src/api/client/agent/agentAccount';
 import { verifyBusinessViaAdmin } from '../../src/api/client/admin/adminAccount';
 import { header } from '../../src/pages/header';
-import { SubscriptionPage } from '../../src/pages/settings/Business/subscriptionPage';
+import { SubscriptionPage } from '../../src/pages/settings/Business/subscription/subscriptionPage';
 import { BrowserContext, Page } from '@playwright/test';
 import process from 'process';
-import { PayStackSubscriptionPage } from '../../src/pages/settings/Business/payStackSubscriptionPage';
+import { PayStackSubscriptionPage } from '../../src/pages/settings/Business/subscription/payStackSubscriptionPage';
 
 const { BASE_URL } = process.env;
 let context: BrowserContext;
@@ -38,7 +38,7 @@ let subscriptionPage: SubscriptionPage;
 let paystackPage: PayStackSubscriptionPage;
 let user: User;
 
-test.describe('Onboarding a business without IATA and Sole Proprietorship and subscribe', (): void => {
+test.describe('Onboarding a sole proprietorship business without IATA and subscribe', (): void => {
   test.beforeAll(async ({ browser }) => {
     context = await browser.newContext();
     page = await context.newPage();
@@ -73,70 +73,65 @@ test.describe('Onboarding a business without IATA and Sole Proprietorship and su
     await context.close();
   });
 
-  test('sign up and login', async (): Promise<void> => {
-    await loginPage.landOnPage();
-    await loginPage.clickSignUp();
-    await signUpPage.clickSignUpWithEmail();
-    await signUpPage.fillAndSubmitSignUpForm(user);
-    const token: string = await verificationPage.getTokenFromEmailClient(
-      user.email,
-      user.emailClientPassword,
-    );
-    await verificationPage.enterToken(token);
-    await verificationPage.submitToken();
-  });
+  test('Onboarding and Subscription Process', async (): Promise<void> => {
+    await test.step('Sign up and login', async () => {
+      await loginPage.landOnPage();
+      await loginPage.clickSignUp();
+      await signUpPage.clickSignUpWithEmail();
+      await signUpPage.fillAndSubmitSignUpForm(user);
+      const token: string = await verificationPage.getTokenFromEmailClient(
+        user.email,
+        user.emailClientPassword,
+      );
+      await verificationPage.enterToken(token);
+      await verificationPage.submitToken();
+    });
 
-  test.describe('Onboard a sole proprietorship business without IATA', () => {
-    test('Verify Getting Started Page', async (): Promise<void> => {
+    await test.step('Verify Getting Started Page', async () => {
       await header.verifyNoSubscription(page);
       await gettingStartedPage.verifyContentsOnPage();
     });
 
-    test('Navigate and select business Details', async (): Promise<void> => {
+    await test.step('Navigate and select business Details', async () => {
       await gettingStartedPage.clickActivateMyBusiness();
       await startBusinessActivation(page);
       await selectAndFillBusinessDetails(page, user);
     });
 
-    test('Fill legal Entity', async (): Promise<void> => {
+    await test.step('Fill legal Entity', async () => {
       await fillLegalEntity(page, user);
     });
 
-    test('Fill key Contact', async (): Promise<void> => {
+    await test.step('Fill key Contact', async () => {
       await fillKeyContact(page, user);
     });
 
-    test('Upload Documents', async (): Promise<void> => {
+    await test.step('Upload Documents', async () => {
       await uploadDocuments(page, user);
     });
 
-    test('Submit and verify Business Under Review', async (): Promise<void> => {
+    await test.step('Submit and verify Business Under Review', async () => {
       await submitForReview(page, user);
       await weHaveReceivedYourActivation(page);
       await gettingStartedPage.verifyBusinessUnderReview();
     });
 
-    test('Verify Business via Admin', async (): Promise<void> => {
+    await test.step('Verify Business via Admin', async () => {
       const accountId: string = await getAgentAccountId(user);
       await verifyBusinessViaAdmin(accountId, user);
     });
 
-    test('Verify Subscription process is shown as next process for onboarding', async (): Promise<void> => {
+    await test.step('Verify Subscription process is shown as next process for onboarding', async () => {
       await header.logout(page);
       await loginPage.landOnPage();
       await loginPage.loginUser(user);
       await header.verifySubscription(page);
     });
-  });
 
-  test.describe('Subscribe to a monthly premium plan', async () => {
-    test('Navigate to subscription', async (): Promise<void> => {
+    await test.step('Navigate to subscription and choose a plan', async () => {
       await gettingStartedPage.clickChooseASubscriptionPlan();
       await subscriptionPage.landOnPage();
       await subscriptionPage.clickSubscribe();
-    });
-
-    test('Choose a monthly premium subscription plan', async (): Promise<void> => {
       await subscriptionPage.verifySubscriptionButtonDisabled();
       await subscriptionPage.selectPlan('premium');
       await subscriptionPage.verifyMonthlyPremiumFee();
@@ -144,17 +139,31 @@ test.describe('Onboarding a business without IATA and Sole Proprietorship and su
       await subscriptionPage.confirmSubscriptionAction();
     });
 
-    test('Pay via Paystack', async (): Promise<void> => {
+    await test.step('Pay via Paystack', async () => {
       await paystackPage.chooseSuccess();
       await paystackPage.clickPaymentButton();
     });
 
-    test('Confirm Subscription', async (): Promise<void> => {
+    await test.step('Confirm Subscription', async () => {
       await subscriptionPage.verifySuccessfulSubscription();
       await header.verifyMyWebsite(page);
       await header.verifyNoSubscription(page);
       await gettingStartedPage.navigateToSubscription(page, BASE_URL);
       await subscriptionPage.verifyPremiumSubscription();
+      await paystackPage.verifyEmailFromPayStack(
+        user.email,
+        user.emailClientPassword,
+        'Your subscription to Premium is now active',
+      );
+    });
+
+    await test.step('Change Subscription', async () => {
+      await subscriptionPage.clickChangeSubscription();
+      await subscriptionPage.selectPlan('ultimate');
+      await subscriptionPage.verifyMonthlyUltimateFee();
+      await subscriptionPage.agreeToTerms();
+      await subscriptionPage.confirmSubscriptionAction();
+      await subscriptionPage.verifySuccessAlert();
     });
   });
 });
