@@ -4,7 +4,7 @@ import { Profile } from '../types/api/user/getProfile';
 import { getAgentProfile } from '../api/client/agent/agentAccount';
 
 export const PASSWORD: string = '@Test12345';
-const { USER_NAME, EMAIL_PASSWORD } = process.env;
+const { USER_NAME } = process.env;
 
 export enum businessType {
   starterBusiness = 'Starter Business',

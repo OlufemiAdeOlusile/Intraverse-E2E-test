@@ -67,7 +67,7 @@ export const waitForSpecificResponse = async <T = any>(
       if (path.includes(targetPath)) {
         clearTimeout(timeoutId);
 
-        let body: T | null = null;
+        let body: T | null;
 
         try {
           body = (await response.json()) as T;
