@@ -1,6 +1,7 @@
 import { Locator, Page, expect } from '@playwright/test';
 import { BasePage } from '../basePage';
-import { User } from 'src/fixtures/user';
+import { PASSWORD } from 'src/fixtures/user';
+import { Profile } from '../../types/api/user/getProfile';
 
 export class LoginPage extends BasePage {
   readonly signUp: Locator;
@@ -24,9 +25,9 @@ export class LoginPage extends BasePage {
     await this.signUp.click();
   }
 
-  async loginUser(user: User) {
-    await this.emailInput.fill(user.email);
-    await this.passwordInput.fill(user.password);
+  async loginUser(user: Profile) {
+    await this.emailInput.fill(user.data.account.email);
+    await this.passwordInput.fill(PASSWORD);
     await this.submitButton.click();
   }
 }

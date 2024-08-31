@@ -1,5 +1,10 @@
 import { faker } from '@faker-js/faker';
 import { mailLogin, mailUser } from 'src/utils/mailJsClient';
+import { Profile } from '../types/api/user/getProfile';
+import { getAgentProfile } from '../api/client/agent/agentAccount';
+
+export const PASSWORD: string = '@Test12345';
+const { USER_NAME, EMAIL_PASSWORD } = process.env;
 
 export enum businessType {
   starterBusiness = 'Starter Business',
@@ -17,106 +22,50 @@ export enum companyPosition {
   shareHolder = 'Share Holder',
 }
 
-interface businessDetails {
-  businessType: string;
-  tradingName: string;
-  businessAddress: string;
-  businessPhoneNumber: string;
-  businessEmail: string;
-  legalEntity: {
-    businessName: string;
-    typeOfBusiness: typeOfBusiness;
-    companyNumber: string;
-    taxIdentificationNumber: string;
-  };
-  keyContact: {
-    firstName: string;
-    lastName: string;
-    position: companyPosition;
-    contactEmail: string;
-    contactPhoneNumber: string;
-  };
-}
-
-export interface User {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  emailClientPassword?: string;
-  phoneNumber: string;
-  businessDetail?: businessDetails;
-}
-
 export const defaultUser = async (
   intraBusinessType?: businessType,
   intraTypeOfBusiness?: typeOfBusiness,
   position?: companyPosition,
-): Promise<User> => {
+): Promise<Profile> => {
   const user: mailUser = await mailLogin();
   return {
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-    email: user.username,
-    password: '@Test12345',
-    phoneNumber: faker.string.numeric(10),
-    emailClientPassword: user.password,
-    businessDetail: {
-      businessType:
-        intraBusinessType || businessType.registeredBusinessWithIata,
-      tradingName: faker.company.name(),
-      businessAddress: faker.location.streetAddress(),
-      businessPhoneNumber: faker.string.numeric(10),
-      businessEmail: user.username,
-      legalEntity: {
-        businessName: faker.company.name(),
-        typeOfBusiness: intraTypeOfBusiness || typeOfBusiness.privateLimited,
-        companyNumber: faker.string.numeric(8),
-        taxIdentificationNumber: faker.string.alphanumeric(7),
-      },
-      keyContact: {
+    message: 'Profile',
+    data: {
+      account: {
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
-        position: position || companyPosition.director,
-        contactEmail: user.username,
-        contactPhoneNumber: faker.string.numeric(10),
+        email: user.username,
+        phone: faker.string.numeric(10),
+        userType: 'Agent',
+        detail: {
+          address: {
+            businessLocation: faker.location.streetAddress(),
+          },
+          legalInfo: {
+            taxIdentification: faker.string.alphanumeric(7).toUpperCase(),
+            companyNumber: faker.string.numeric(8),
+          },
+          contact: {
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            position: position || companyPosition.director,
+            email: user.username,
+            phoneNumber: faker.string.numeric(10),
+          },
+          agencyName: faker.company.name(),
+          agencyType:
+            intraBusinessType || businessType.registeredBusinessWithIata,
+          registeredBusinessName: faker.company.name(),
+          tradingName: faker.company.name(),
+          businessPhone: faker.string.numeric(10),
+          businessEmail: user.username,
+          typeOfBusiness: intraTypeOfBusiness || typeOfBusiness.privateLimited,
+        },
       },
     },
   };
 };
 
-export const signUpUser = async (
-  intraBusinessType?: businessType,
-  intraTypeOfBusiness?: typeOfBusiness,
-  position?: companyPosition,
-): Promise<User> => {
-  const email: string = 'wl1l2@belgianairways.com';
-  return {
-    firstName: 'Elvis',
-    lastName: 'Carroll',
-    email,
-    password: '@Test12345',
-    phoneNumber: faker.string.numeric(10),
-    businessDetail: {
-      businessType:
-        intraBusinessType || businessType.registeredBusinessWithIata,
-      tradingName: faker.company.name(),
-      businessAddress: faker.location.streetAddress(),
-      businessPhoneNumber: faker.string.numeric(10),
-      businessEmail: email,
-      legalEntity: {
-        businessName: faker.company.name(),
-        typeOfBusiness: intraTypeOfBusiness || typeOfBusiness.privateLimited,
-        companyNumber: faker.string.numeric(8),
-        taxIdentificationNumber: faker.string.alphanumeric(7),
-      },
-      keyContact: {
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
-        position: position || companyPosition.director,
-        contactEmail: email,
-        contactPhoneNumber: faker.string.numeric(10),
-      },
-    },
-  };
+export const bookingUser = async (): Promise<Profile> => {
+  return getAgentProfile(USER_NAME, PASSWORD);
 };

@@ -1,9 +1,9 @@
 import { test } from 'src/fixtures';
-import { defaultUser, User } from 'src/fixtures/user';
+import { defaultUser, PASSWORD} from 'src/fixtures/user';
 import { LoginPage } from 'src/pages/signUpAndLogin/loginPage';
 import { SignUpPage } from 'src/pages/signUpAndLogin/signUpPage';
 import { VerificationPage } from 'src/pages/signUpAndLogin/verificationPage';
-import { GettingStartedPage } from '../../src/pages/onboarding/gettingStartedPage';
+import { HomePage } from '../../src/pages/HomePage';
 import {
   fillKeyContact,
   fillLegalEntity,
@@ -21,6 +21,7 @@ import { BrowserContext, Page } from '@playwright/test';
 import process from 'process';
 import { PayStackSubscriptionPage } from '../../src/pages/settings/Business/subscription/payStackSubscriptionPage';
 import { BrandPage } from '../../src/pages/settings/Business/brandPage';
+import { Profile } from '../../src/types/api/user/getProfile';
 
 const { BASE_URL } = process.env;
 let context: BrowserContext;
@@ -28,11 +29,11 @@ let page: Page;
 let loginPage: LoginPage;
 let signUpPage: SignUpPage;
 let verificationPage: VerificationPage;
-let gettingStartedPage: GettingStartedPage;
+let gettingStartedPage: HomePage;
 let subscriptionPage: SubscriptionPage;
 let paystackPage: PayStackSubscriptionPage;
 let brandPage: BrandPage;
-let user: User;
+let user: Profile;
 
 test.describe('Onboarding a business with IATA and subscribe', () => {
   test.beforeAll(async ({ browser }) => {
@@ -42,7 +43,7 @@ test.describe('Onboarding a business with IATA and subscribe', () => {
 
     signUpPage = new SignUpPage(page);
     verificationPage = new VerificationPage(page);
-    gettingStartedPage = new GettingStartedPage(page);
+    gettingStartedPage = new HomePage(page);
     subscriptionPage = new SubscriptionPage(page);
     loginPage = new LoginPage(page);
     paystackPage = new PayStackSubscriptionPage(page);
@@ -62,8 +63,8 @@ test.describe('Onboarding a business with IATA and subscribe', () => {
       await signUpPage.clickSignUpWithEmail();
       await signUpPage.fillAndSubmitSignUpForm(user);
       const token: string = await verificationPage.getTokenFromEmailClient(
-        user.email,
-        user.emailClientPassword,
+        user.data.account.email,
+        PASSWORD,
       );
       await verificationPage.enterToken(token);
       await verificationPage.submitToken();
@@ -134,8 +135,8 @@ test.describe('Onboarding a business with IATA and subscribe', () => {
       await subscriptionPage.verifyUltimateSubscription();
       await subscriptionPage.clickGoBack();
       await paystackPage.verifyEmailFromPayStack(
-        user.email,
-        user.emailClientPassword,
+        user.data.account.email,
+        PASSWORD,
         'Your subscription to Ultimate is now active',
       );
     });

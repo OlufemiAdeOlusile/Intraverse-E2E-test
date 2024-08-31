@@ -2,7 +2,7 @@ import { Locator, Page, expect } from '@playwright/test';
 import { BasePage } from '../basePage';
 import retry from 'async-retry';
 import { config } from 'src/utils/config';
-import { GettingStartedPage } from '../onboarding/gettingStartedPage';
+import { HomePage } from '../HomePage';
 import { getEmail } from '../../utils/mailJsClient';
 
 export class VerificationPage extends BasePage {
@@ -54,9 +54,7 @@ export class VerificationPage extends BasePage {
 
   async submitToken() {
     await this.verify.click();
-    const gettingStartedPage: GettingStartedPage = new GettingStartedPage(
-      this.page,
-    );
+    const gettingStartedPage: HomePage = new HomePage(this.page);
     await gettingStartedPage.landOnPage();
   }
 }

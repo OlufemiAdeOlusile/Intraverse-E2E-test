@@ -1,7 +1,7 @@
 import { Locator, Page, expect } from '@playwright/test';
-import { BasePage } from '../basePage';
+import { BasePage } from './basePage';
 
-export class GettingStartedPage extends BasePage {
+export class HomePage extends BasePage {
   readonly gettingStartedText: Locator;
   readonly homeTab: Locator;
   readonly dashboardTab: Locator;
@@ -64,6 +64,10 @@ export class GettingStartedPage extends BasePage {
 
   async clickActivateMyBusiness() {
     await this.activateMyBusiness.click();
+  }
+
+  async clickBookAFlight() {
+    await this.bookAFlightText.click();
   }
 
   async clickChooseASubscriptionPlan() {

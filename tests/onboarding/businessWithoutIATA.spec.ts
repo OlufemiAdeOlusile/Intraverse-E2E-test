@@ -3,13 +3,13 @@ import {
   businessType,
   companyPosition,
   defaultUser,
+  PASSWORD,
   typeOfBusiness,
-  User,
 } from 'src/fixtures/user';
 import { LoginPage } from 'src/pages/signUpAndLogin/loginPage';
 import { SignUpPage } from 'src/pages/signUpAndLogin/signUpPage';
 import { VerificationPage } from 'src/pages/signUpAndLogin/verificationPage';
-import { GettingStartedPage } from '../../src/pages/onboarding/gettingStartedPage';
+import { HomePage } from '../../src/pages/HomePage';
 import {
   fillKeyContact,
   fillLegalEntity,
@@ -26,6 +26,7 @@ import { SubscriptionPage } from '../../src/pages/settings/Business/subscription
 import { BrowserContext, Page } from '@playwright/test';
 import process from 'process';
 import { PayStackSubscriptionPage } from '../../src/pages/settings/Business/subscription/payStackSubscriptionPage';
+import { Profile } from '../../src/types/api/user/getProfile';
 
 const { BASE_URL } = process.env;
 let context: BrowserContext;
@@ -33,10 +34,10 @@ let page: Page;
 let loginPage: LoginPage;
 let signUpPage: SignUpPage;
 let verificationPage: VerificationPage;
-let gettingStartedPage: GettingStartedPage;
+let gettingStartedPage: HomePage;
 let subscriptionPage: SubscriptionPage;
 let paystackPage: PayStackSubscriptionPage;
-let user: User;
+let user: Profile;
 
 test.describe('Onboarding a business without IATA and subscribe', (): void => {
   test.beforeAll(async ({ browser }) => {
@@ -46,7 +47,7 @@ test.describe('Onboarding a business without IATA and subscribe', (): void => {
 
     signUpPage = new SignUpPage(page);
     verificationPage = new VerificationPage(page);
-    gettingStartedPage = new GettingStartedPage(page);
+    gettingStartedPage = new HomePage(page);
     subscriptionPage = new SubscriptionPage(page);
     loginPage = new LoginPage(page);
     paystackPage = new PayStackSubscriptionPage(page);
@@ -54,16 +55,19 @@ test.describe('Onboarding a business without IATA and subscribe', (): void => {
     user = await defaultUser();
     user = {
       ...user,
-      businessDetail: {
-        ...user.businessDetail,
-        businessType: businessType.registeredBusinessWithoutIata,
-        legalEntity: {
-          ...user.businessDetail.legalEntity,
-          typeOfBusiness: typeOfBusiness.nonRegistered,
-        },
-        keyContact: {
-          ...user.businessDetail.keyContact,
-          position: companyPosition.shareHolder,
+      data: {
+        ...user.data,
+        account: {
+          ...user.data.account,
+          detail: {
+            ...user.data.account.detail,
+            agencyType: businessType.registeredBusinessWithoutIata,
+            typeOfBusiness: typeOfBusiness.nonRegistered,
+            contact: {
+              ...user.data.account.detail.contact,
+              position: companyPosition.shareHolder,
+            },
+          },
         },
       },
     };
@@ -80,8 +84,8 @@ test.describe('Onboarding a business without IATA and subscribe', (): void => {
       await signUpPage.clickSignUpWithEmail();
       await signUpPage.fillAndSubmitSignUpForm(user);
       const token: string = await verificationPage.getTokenFromEmailClient(
-        user.email,
-        user.emailClientPassword,
+        user.data.account.email,
+        PASSWORD,
       );
       await verificationPage.enterToken(token);
       await verificationPage.submitToken();
@@ -152,8 +156,8 @@ test.describe('Onboarding a business without IATA and subscribe', (): void => {
       await gettingStartedPage.navigateToSubscription(page, BASE_URL);
       await subscriptionPage.verifyPremiumSubscription();
       await paystackPage.verifyEmailFromPayStack(
-        user.email,
-        user.emailClientPassword,
+        user.data.account.email,
+        PASSWORD,
         'Your subscription to Premium-annual is now active',
       );
     });

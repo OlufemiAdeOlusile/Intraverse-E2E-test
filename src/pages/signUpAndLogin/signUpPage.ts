@@ -2,10 +2,11 @@
 
 import { Locator, Page, expect } from '@playwright/test';
 import { BasePage } from '../basePage';
-import { User } from 'src/fixtures/user';
+import { PASSWORD } from 'src/fixtures/user';
 import retry from 'async-retry';
 import { config } from 'src/utils/config';
 import { VerificationPage } from './verificationPage';
+import { Account, Profile } from '../../types/api/user/getProfile';
 
 export class SignUpPage extends BasePage {
   readonly firstNameInput: Locator;
@@ -37,21 +38,23 @@ export class SignUpPage extends BasePage {
     this.submitButton = page.getByRole('button', { name: /sign up/i });
   }
 
-  async landOnPage() {
+  async landOnPage(): Promise<void> {
     await expect(this.signUpWithEmail).toBeVisible();
   }
 
-  async clickSignUpWithEmail() {
+  async clickSignUpWithEmail(): Promise<void> {
     await this.signUpWithEmail.click();
   }
 
-  async fillAndSubmitSignUpForm(user: User) {
-    await this.firstNameInput.fill(user.firstName);
-    await this.lastNameInput.fill(user.lastName);
-    await this.emailInput.fill(user.email);
-    await this.phoneNumber.fill(user.phoneNumber);
-    await this.passwordInput.fill(user.password);
-    await this.confirmPasswordInput.fill(user.password);
+  async fillAndSubmitSignUpForm(user: Profile): Promise<void> {
+    const account: Account = user.data.account;
+
+    await this.firstNameInput.fill(account.firstName);
+    await this.lastNameInput.fill(account.lastName);
+    await this.emailInput.fill(account.email);
+    await this.phoneNumber.fill(account.phone);
+    await this.passwordInput.fill(PASSWORD);
+    await this.confirmPasswordInput.fill(PASSWORD);
     await this.termsAndConditionCheckBox.check();
 
     await retry(async () => {

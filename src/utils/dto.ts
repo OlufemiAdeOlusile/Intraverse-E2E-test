@@ -9,21 +9,46 @@ export const ROLE_NAMES = {
   TAB: 'tab',
   CHECKBOX: 'checkbox',
   OPTION: 'option',
+  GROUP: 'group',
+  GRID_CELL: 'gridcell',
 } as const;
 
-export const getByButton = async (page: Page, regex: RegExp) => {
+export const getByButton = async (
+  page: Page,
+  regex: RegExp,
+): Promise<Locator> => {
   return page.getByRole(ROLE_NAMES.BUTTON, { name: regex });
 };
 
-export const getByLink = async (page: Page, regex: RegExp) => {
+export const getByLink = async (
+  page: Page,
+  regex: RegExp,
+): Promise<Locator> => {
   return page.getByRole(ROLE_NAMES.LINK, { name: regex });
 };
 
-export const getByHeading = async (page: Page, regex: RegExp) => {
+export const getByHeading = async (
+  page: Page,
+  regex: RegExp,
+): Promise<Locator> => {
   return page.getByRole(ROLE_NAMES.HEADING, { name: regex });
 };
-export const getByTextBox = async (page: Page, regex: RegExp) => {
+export const getByTextBox = async (
+  page: Page,
+  regex: RegExp,
+): Promise<Locator> => {
   return page.getByRole(ROLE_NAMES.TEXT_BOX, { name: regex });
+};
+
+export const fillCalendar = async (
+  page: Page,
+  months: number,
+  day: string,
+): Promise<void> => {
+  for (let i: number = 0; i < months; i++) {
+    await page.getByLabel(/go to next month/i).click();
+  }
+  await page.getByRole(ROLE_NAMES.GRID_CELL, { name: day }).click();
 };
 
 export const fillByRoleTextBox = async (

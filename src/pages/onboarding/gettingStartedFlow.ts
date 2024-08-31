@@ -1,6 +1,6 @@
 import { FileChooser, Page } from 'playwright';
 import { expect } from 'playwright/test';
-import { businessType, User } from '../../fixtures/user';
+import { Profile } from '../../types/api/user/getProfile'; // Profile is imported from the correct path
 import {
   chooseFromDropDownByRole,
   clickByButton,
@@ -14,6 +14,7 @@ import {
 } from '../../utils/dto';
 import { getUploadDocFilePath } from '../../utils/utility';
 import { Locator } from '@playwright/test';
+import { businessType } from '../../fixtures/user';
 
 const activateBusinessLocators = {
   addButton: /add/i,
@@ -66,20 +67,25 @@ export const startBusinessActivation = async (page: Page) => {
   await clickAddButtonOnActivateBusiness(page);
 };
 
-export const selectAndFillBusinessDetails = async (page: Page, user: User) => {
-  //Select BusinessType
-  const dynamicSelector: string = `h5:has-text("${user.firstName} ${user.lastName}, Welcome to Intraverse!")`;
+export const selectAndFillBusinessDetails = async (
+  page: Page,
+  user: Profile,
+) => {
+  // Select BusinessType
+  const dynamicSelector: string = `h5:has-text("${user.data.account.firstName} ${user.data.account.lastName}, Welcome to Intraverse!")`;
   await verifyTextViaTextSelector(page, dynamicSelector);
   await selectBusinessType(user, page);
 
-  //Fill Business Details
-  const dynamicSelector2: string = `h5:has-text("Hey ${user.firstName}, let's get you started!")`;
+  // Fill Business Details
+  const dynamicSelector2: string = `h5:has-text("Hey ${user.data.account.firstName}, let's get you started!")`;
   await verifyTextViaTextSelector(page, dynamicSelector2);
   await fillBusinessDetailsForm(page, user);
 };
 
-export const fillLegalEntity = async (page: Page, user: User) => {
-  if (user.businessDetail.businessType.includes(businessType.starterBusiness)) {
+export const fillLegalEntity = async (page: Page, user: Profile) => {
+  if (
+    user.data.account.detail.agencyType.includes(businessType.starterBusiness)
+  ) {
     await page
       .getByText(legalEntity.asARegulatedBody)
       .waitFor({ state: 'visible' });
@@ -88,28 +94,28 @@ export const fillLegalEntity = async (page: Page, user: User) => {
     await fillByRoleTextBox(
       page,
       legalEntity.registeredBusinessName,
-      user.businessDetail.legalEntity.businessName,
+      user.data.account.detail.registeredBusinessName,
     );
     await fillByRoleTextBox(
       page,
       legalEntity.companyNumber,
-      user.businessDetail.legalEntity.companyNumber,
+      user.data.account.detail.legalInfo.companyNumber,
     );
     await fillByRoleTextBox(
       page,
       legalEntity.taxIdentificationNumber,
-      user.businessDetail.legalEntity.taxIdentificationNumber,
+      user.data.account.detail.legalInfo.taxIdentification,
     );
     await chooseFromDropDownByRole(
       page,
       legalEntity.typeOfRegisteredBusiness,
-      user.businessDetail.legalEntity.typeOfBusiness,
+      user.data.account.detail.typeOfBusiness,
     );
     await clickByButton(page, legalEntity.nextButton);
   }
 };
 
-export const fillKeyContact = async (page: Page, user: User) => {
+export const fillKeyContact = async (page: Page, user: Profile) => {
   await page
     .getByText(keyContact.businessRepTextHeading)
     .waitFor({ state: 'visible' });
@@ -117,33 +123,35 @@ export const fillKeyContact = async (page: Page, user: User) => {
   await fillByRoleTextBox(
     page,
     keyContact.firstName,
-    user.businessDetail.keyContact.firstName,
+    user.data.account.detail.contact.firstName,
   );
   await fillByRoleTextBox(
     page,
     keyContact.lastName,
-    user.businessDetail.keyContact.lastName,
+    user.data.account.detail.contact.lastName,
   );
   await fillByRoleTextBox(
     page,
     keyContact.contactEmail,
-    user.businessDetail.keyContact.contactEmail,
+    user.data.account.detail.contact.email,
   );
   await fillBySelector(
     page,
     keyContact.contactPhoneNumber,
-    user.businessDetail.keyContact.contactPhoneNumber,
+    user.data.account.detail.contact.phoneNumber,
   );
   await chooseFromDropDownByRole(
     page,
     keyContact.position,
-    user.businessDetail.keyContact.position,
+    user.data.account.detail.contact.position,
   );
   await clickByButton(page, businessDetails.nextButton);
 };
 
-export const uploadDocuments = async (page: Page, user: User) => {
-  if (user.businessDetail.businessType.includes(businessType.starterBusiness)) {
+export const uploadDocuments = async (page: Page, user: Profile) => {
+  if (
+    user.data.account.detail.agencyType.includes(businessType.starterBusiness)
+  ) {
     await clickByButton(page, /continue/i);
   } else {
     await page
@@ -168,29 +176,34 @@ export const uploadDocuments = async (page: Page, user: User) => {
   }
 };
 
-export const submitForReview = async (page: Page, user: User) => {
-  //await verifyTextByRole(page, user.businessDetail.businessType);
-  await verifyTextByRole(page, user.businessDetail.tradingName);
-  await verifyTextByRole(page, user.businessDetail.businessAddress);
+export const submitForReview = async (page: Page, user: Profile) => {
+  await verifyTextByRole(page, user.data.account.detail.tradingName);
+  await verifyTextByRole(
+    page,
+    user.data.account.detail.address.businessLocation,
+  );
 
   if (
-    !user.businessDetail.businessType.includes(businessType.starterBusiness)
+    !user.data.account.detail.agencyType.includes(businessType.starterBusiness)
   ) {
-    await verifyTextByRole(page, user.businessDetail.legalEntity.businessName);
-    await verifyTextByRole(page, user.businessDetail.legalEntity.businessName);
     await verifyTextByRole(
       page,
-      user.businessDetail.legalEntity.typeOfBusiness,
+      user.data.account.detail.registeredBusinessName,
     );
     await verifyTextByRole(
       page,
-      user.businessDetail.legalEntity.taxIdentificationNumber,
+      user.data.account.detail.legalInfo.companyNumber,
+    );
+    await verifyTextByRole(page, user.data.account.detail.typeOfBusiness);
+    await verifyTextByRole(
+      page,
+      user.data.account.detail.legalInfo.taxIdentification,
     );
   }
 
-  await verifyTextByRole(page, user.businessDetail.keyContact.firstName);
-  await verifyTextByRole(page, user.businessDetail.keyContact.lastName);
-  await verifyTextByRole(page, user.businessDetail.keyContact.position);
+  await verifyTextByRole(page, user.data.account.detail.contact.firstName);
+  await verifyTextByRole(page, user.data.account.detail.contact.lastName);
+  await verifyTextByRole(page, user.data.account.detail.contact.position);
 
   await clickByButton(page, /submit for review/i);
 };
@@ -219,37 +232,39 @@ const clickAddButtonOnActivateBusiness = async (page: Page) => {
     .click();
 };
 
-const fillBusinessDetailsForm = async (page: Page, user: User) => {
+const fillBusinessDetailsForm = async (page: Page, user: Profile) => {
   await fillByRoleTextBox(
     page,
     businessDetails.tradingName,
-    user.businessDetail.tradingName,
+    user.data.account.detail.tradingName,
   );
   await fillByRoleTextBox(
     page,
     businessDetails.businessAddress,
-    user.businessDetail.businessAddress,
+    user.data.account.detail.address.businessLocation,
   );
   await fillBySelector(
     page,
     businessDetails.phoneNumber,
-    user.businessDetail.businessPhoneNumber,
+    user.data.account.detail.businessPhone,
   );
   await fillBySelector(
     page,
     businessDetails.email,
-    user.businessDetail.businessEmail,
+    user.data.account.detail.businessEmail,
   );
   await clickByButton(page, businessDetails.nextButton);
 };
 
-const selectBusinessType = async (user: User, page: Page) => {
-  if (user.businessDetail.businessType.includes(businessType.starterBusiness)) {
+const selectBusinessType = async (user: Profile, page: Page) => {
+  if (
+    user.data.account.detail.agencyType.includes(businessType.starterBusiness)
+  ) {
     await page.getByText(businessDetails.starterBusiness).click();
   }
 
   if (
-    user.businessDetail.businessType.includes(
+    user.data.account.detail.agencyType.includes(
       businessType.registeredBusinessWithIata,
     )
   ) {
@@ -257,7 +272,7 @@ const selectBusinessType = async (user: User, page: Page) => {
   }
 
   if (
-    user.businessDetail.businessType.includes(
+    user.data.account.detail.agencyType.includes(
       businessType.registeredBusinessWithoutIata,
     )
   ) {
