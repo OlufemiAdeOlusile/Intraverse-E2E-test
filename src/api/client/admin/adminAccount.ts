@@ -13,7 +13,6 @@ const apiClient: ApiClient = new ApiClient(
 );
 
 export const verifyBusinessViaAdmin = async (id: string, user: Profile) => {
-  console.log('test');
   const response: adminActivatedResponse =
     await apiClient.patchRequestWithToken<adminActivatedResponse>(
       `/account/verifyBusiness/${id}`,
