@@ -24,27 +24,34 @@ export class ApiClient {
     this.requestContext = await request.newContext({});
 
     await retry(async () => {
-      const apiResponse: APIResponse = await this.requestContext.post(
-        this.url + this.loginPath,
-        {
-          data: {
-            email: this.email,
-            password: this.password,
+      let apiResponse: APIResponse;
+
+      try {
+        apiResponse = await this.requestContext.post(
+          this.url + this.loginPath,
+          {
+            data: {
+              email: this.email,
+              password: this.password,
+            },
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
+        );
 
-      if (!apiResponse.ok()) {
-        throw new Error('API returned an error response');
-      }
+        if (!apiResponse.ok()) {
+          throw new Error('API returned an error response');
+        }
 
-      this.postResponseBody = (await apiResponse.json()) as AccountResponse;
+        this.postResponseBody = (await apiResponse.json()) as AccountResponse;
 
-      if (!this.postResponseBody.data.token) {
-        throw new Error('No token provided');
+        if (!this.postResponseBody.data.token) {
+          throw new Error('No token provided');
+        }
+      } catch (error) {
+        console.log(`Attempt failed: ${error.message}`);
+        throw error;
       }
     }, config.RETRY_CONFIG);
 
