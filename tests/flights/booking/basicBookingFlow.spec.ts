@@ -32,10 +32,11 @@ test.describe('Create a basic booking e2e', () => {
     homePage = new HomePage(page);
     searchPage = new SearchPage(page);
     offersPage = new OffersPage(page);
-    user = await bookingUser();
 
     await page.goto(BASE_URL);
     await loginPage.landOnPage();
+
+    user = await bookingUser();
     await loginPage.loginUser(user);
     await homePage.clickBookAFlight();
   });

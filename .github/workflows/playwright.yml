@@ -44,6 +44,8 @@ jobs:
           API_ADMIN_URL: ${{ secrets.API_ADMIN_URL }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          USER_NAME: ${{ secrets.USER_NAME }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
 
       - name: Upload Playwright Report
         if: always()
