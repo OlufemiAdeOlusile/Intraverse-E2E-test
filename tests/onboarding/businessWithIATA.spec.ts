@@ -1,5 +1,5 @@
 import { test } from 'src/fixtures';
-import { defaultUser, PASSWORD} from 'src/fixtures/user';
+import { defaultUser, PASSWORD } from 'src/fixtures/user';
 import { LoginPage } from 'src/pages/signUpAndLogin/loginPage';
 import { SignUpPage } from 'src/pages/signUpAndLogin/signUpPage';
 import { VerificationPage } from 'src/pages/signUpAndLogin/verificationPage';
