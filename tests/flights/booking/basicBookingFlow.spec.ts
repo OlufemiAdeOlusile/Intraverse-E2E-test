@@ -23,7 +23,7 @@ let offersPage: OffersPage;
 let user: Profile;
 let flightSearchResults: FlightSearchResults;
 
-test.describe.only('Create a basic booking e2e', () => {
+test.describe('Create a basic booking e2e', () => {
   test.beforeAll(async ({ browser }) => {
     context = await browser.newContext();
     page = await context.newPage();
